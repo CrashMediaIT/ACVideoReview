@@ -179,6 +179,9 @@ $csrf_token = generateCsrfToken();
             <a href="?page=film_room" class="<?= $page === 'film_room' ? 'active' : '' ?>">
                 <i class="fas fa-video"></i> Film Room
             </a>
+            <a href="?page=review_sessions" class="<?= $page === 'review_sessions' ? 'active' : '' ?>">
+                <i class="fas fa-chalkboard-teacher"></i> Review Sessions
+            </a>
             <?php if ($isAdmin): ?>
                 <div class="nav-divider"></div>
                 <a href="?page=permissions" class="<?= $page === 'permissions' ? 'active' : '' ?>">
@@ -256,6 +259,9 @@ $csrf_token = generateCsrfToken();
                 break;
             case 'film_room':
                 include __DIR__ . '/views/film_room.php';
+                break;
+            case 'review_sessions':
+                include __DIR__ . '/views/review_sessions.php';
                 break;
             case 'permissions':
                 include __DIR__ . '/views/permissions.php';
