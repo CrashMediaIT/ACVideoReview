@@ -1,7 +1,12 @@
 # Environment files
 *.env
 .env
+video_review.env
 config/*.env
+
+# Setup flags
+.setup_complete
+.permissions_setup_done
 
 # Upload directories
 uploads/videos/*
