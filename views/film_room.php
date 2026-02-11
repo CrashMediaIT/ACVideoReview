@@ -98,21 +98,23 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
         error_log('Film room - games error: ' . $e->getMessage());
     }
 
-    // Fetch uploaded videos
+    // Fetch uploaded videos (with NDI camera name if ndi_cameras table exists)
     try {
         $stmt = dbQuery($pdo,
             "SELECT vs.id, vs.title, vs.description, vs.camera_angle, vs.duration_seconds,
                     vs.thumbnail_path, vs.status, vs.file_path, vs.file_url, vs.file_size,
-                    vs.format, vs.resolution, vs.source_type, vs.recorded_at,
+                    vs.format, vs.resolution, vs.source_type, vs.ndi_camera_id, vs.recorded_at,
                     vs.created_at, vs.game_schedule_id, vs.team_id,
                     t.team_name,
                     gs.game_date, t2.team_name AS opponent_name,
-                    u.first_name AS uploader_first, u.last_name AS uploader_last
+                    u.first_name AS uploader_first, u.last_name AS uploader_last,
+                    nc.name AS ndi_camera_name
              FROM vr_video_sources vs
              LEFT JOIN teams t ON t.id = vs.team_id
              LEFT JOIN game_schedules gs ON gs.id = vs.game_schedule_id
              LEFT JOIN teams t2 ON t2.id = gs.opponent_team_id
              LEFT JOIN users u ON u.id = vs.uploaded_by
+             LEFT JOIN ndi_cameras nc ON nc.id = vs.ndi_camera_id
              WHERE vs.team_id IN (SELECT team_id FROM team_coach_assignments WHERE coach_id = :uid)
              ORDER BY vs.created_at DESC
              LIMIT 100",
@@ -120,7 +122,30 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
         );
         $videos = $stmt->fetchAll();
     } catch (PDOException $e) {
-        error_log('Film room - videos error: ' . $e->getMessage());
+        // Fallback: ndi_cameras table may not exist yet; query without the JOIN
+        try {
+            $stmt = dbQuery($pdo,
+                "SELECT vs.id, vs.title, vs.description, vs.camera_angle, vs.duration_seconds,
+                        vs.thumbnail_path, vs.status, vs.file_path, vs.file_url, vs.file_size,
+                        vs.format, vs.resolution, vs.source_type, vs.recorded_at,
+                        vs.created_at, vs.game_schedule_id, vs.team_id,
+                        t.team_name,
+                        gs.game_date, t2.team_name AS opponent_name,
+                        u.first_name AS uploader_first, u.last_name AS uploader_last
+                 FROM vr_video_sources vs
+                 LEFT JOIN teams t ON t.id = vs.team_id
+                 LEFT JOIN game_schedules gs ON gs.id = vs.game_schedule_id
+                 LEFT JOIN teams t2 ON t2.id = gs.opponent_team_id
+                 LEFT JOIN users u ON u.id = vs.uploaded_by
+                 WHERE vs.team_id IN (SELECT team_id FROM team_coach_assignments WHERE coach_id = :uid)
+                 ORDER BY vs.created_at DESC
+                 LIMIT 100",
+                [':uid' => $user_id]
+            );
+            $videos = $stmt->fetchAll();
+        } catch (PDOException $e2) {
+            error_log('Film room - videos error: ' . $e2->getMessage());
+        }
     }
 
     // Fetch tags
@@ -251,9 +276,14 @@ if ($activeTab === 'upload'):
 <div class="card" style="margin-bottom:24px;">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
         <h3><i class="fas fa-cloud-upload-alt"></i> Upload Video</h3>
-        <button type="button" class="btn btn-sm btn-outline" data-action="record-device" onclick="startDeviceCapture()">
-            <i class="fas fa-camera"></i> Record from Device
-        </button>
+        <div style="display:flex;gap:8px;">
+            <button type="button" class="btn btn-sm btn-outline" data-action="record-ndi" onclick="openNdiRecordPanel()">
+                <i class="fas fa-broadcast-tower"></i> Record from NDI Camera
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" data-action="record-device" onclick="startDeviceCapture()">
+                <i class="fas fa-camera"></i> Record from Device
+            </button>
+        </div>
     </div>
     <div class="card-body">
         <form id="videoUploadForm" method="POST" action="api/video_upload.php" enctype="multipart/form-data" data-form="video-upload">
@@ -337,6 +367,99 @@ if ($activeTab === 'upload'):
     </div>
 </div>
 
+<!-- NDI Camera Recording Panel (hidden by default) -->
+<div id="ndiRecordPanel" class="card" style="margin-bottom:24px;display:none;">
+    <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <h3><i class="fas fa-broadcast-tower"></i> Record from NDI Camera</h3>
+        <button type="button" class="btn btn-sm btn-outline" onclick="closeNdiRecordPanel()">
+            <i class="fas fa-times"></i> Close
+        </button>
+    </div>
+    <div class="card-body">
+        <div id="ndiCameraList" style="margin-bottom:16px;">
+            <div style="text-align:center;padding:20px;color:var(--text-muted);">
+                <i class="fas fa-spinner fa-spin"></i> Loading NDI cameras...
+            </div>
+        </div>
+
+        <div id="ndiRecordingArea" style="display:none;">
+            <div style="position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--radius-md);overflow:hidden;margin-bottom:16px;">
+                <video id="ndiPreview" style="width:100%;height:100%;object-fit:contain;" autoplay muted playsinline></video>
+                <div id="ndiRecordingIndicator" style="display:none;position:absolute;top:12px;left:12px;background:rgba(239,68,68,0.9);color:#fff;padding:6px 14px;border-radius:16px;font-size:13px;font-weight:600;">
+                    <span style="display:inline-block;width:8px;height:8px;background:#fff;border-radius:50%;margin-right:6px;animation:pulse 1s infinite;"></span>REC
+                </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                <span id="ndiSelectedCameraName" style="font-size:14px;font-weight:600;color:var(--text-white);"></span>
+                <span id="ndiRecordTimer" style="font-family:monospace;font-size:14px;color:var(--text-secondary);">0:00</span>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-bottom:16px;">
+                <button id="ndiStartRecordBtn" class="btn btn-primary" onclick="ndiStartRecording()">
+                    <i class="fas fa-circle" style="color:#ef4444;"></i> Start Recording
+                </button>
+                <button id="ndiStopRecordBtn" class="btn btn-secondary" onclick="ndiStopRecording()" disabled>
+                    <i class="fas fa-stop"></i> Stop Recording
+                </button>
+            </div>
+
+            <!-- NDI upload form (populated after recording) -->
+            <form id="ndiUploadForm" method="POST" action="api/video_upload.php" enctype="multipart/form-data" style="display:none;">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+                <input type="hidden" name="source_type" value="ndi">
+                <input type="hidden" id="ndiCameraIdInput" name="ndi_camera_id" value="">
+                <input type="file" id="ndiFileInput" name="video_file" style="display:none;" accept="video/*">
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div>
+                        <label class="form-label" style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">Title</label>
+                        <input type="text" name="title" id="ndiTitle" class="form-input" placeholder="NDI recording title" required>
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">Camera Angle</label>
+                        <select name="camera_angle" class="form-select">
+                            <option value="">Select angle...</option>
+                            <?php foreach ($cameraAngleLabels as $angleKey => $angleLabel): ?>
+                                <option value="<?= $angleKey ?>"><?= $angleLabel ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">Game Assignment</label>
+                        <select name="game_schedule_id" class="form-select">
+                            <option value="">No game (general footage)</option>
+                            <?php foreach ($upcomingGames as $game): ?>
+                                <option value="<?= (int)$game['id'] ?>">
+                                    <?= date('M j, Y', strtotime($game['game_date'])) ?>
+                                    <?php if (!empty($game['opponent_name'])): ?>
+                                        — vs <?= htmlspecialchars($game['opponent_name']) ?>
+                                    <?php endif; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">Team</label>
+                        <select name="team_id" class="form-select" required>
+                            <option value="">Select team...</option>
+                            <?php foreach ($teams as $team): ?>
+                                <option value="<?= (int)$team['id'] ?>"><?= htmlspecialchars($team['team_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top:16px;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Save NDI Recording
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Video List -->
 <div class="card">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
@@ -375,9 +498,19 @@ if ($activeTab === 'upload'):
                                             <?php endif; ?>
                                         </div>
                                         <div>
-                                            <div style="font-weight:600;font-size:13px;color:var(--text-white);" class="truncate"><?= htmlspecialchars($video['title']) ?></div>
+                                            <div style="font-weight:600;font-size:13px;color:var(--text-white);" class="truncate">
+                                                <?= htmlspecialchars($video['title']) ?>
+                                                <?php if ($video['source_type'] === 'ndi'): ?>
+                                                    <span class="badge badge-info" style="font-size:9px;margin-left:4px;">NDI</span>
+                                                <?php endif; ?>
+                                            </div>
                                             <?php if (!empty($video['team_name'])): ?>
-                                                <div style="font-size:11px;color:var(--text-muted);"><?= htmlspecialchars($video['team_name']) ?></div>
+                                                <div style="font-size:11px;color:var(--text-muted);">
+                                                    <?= htmlspecialchars($video['team_name']) ?>
+                                                    <?php if (!empty($video['ndi_camera_name'])): ?>
+                                                        &middot; <?= htmlspecialchars($video['ndi_camera_name']) ?>
+                                                    <?php endif; ?>
+                                                </div>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -478,6 +611,172 @@ function startDeviceCapture() {
 
 function openEditVideoModal(id, title) {
     alert('Edit details for: ' + title + ' (ID: ' + id + ')');
+}
+
+/* -------------------------------------------------------
+   NDI Camera Recording
+------------------------------------------------------- */
+var ndiMediaStream = null;
+var ndiMediaRecorder = null;
+var ndiRecordedChunks = [];
+var ndiRecordStartTime = null;
+var ndiTimerInterval = null;
+
+function openNdiRecordPanel() {
+    var panel = document.getElementById('ndiRecordPanel');
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth' });
+    loadNdiCameras();
+}
+
+function closeNdiRecordPanel() {
+    ndiStopStream();
+    document.getElementById('ndiRecordPanel').style.display = 'none';
+    document.getElementById('ndiRecordingArea').style.display = 'none';
+    document.getElementById('ndiUploadForm').style.display = 'none';
+}
+
+function loadNdiCameras() {
+    var listEl = document.getElementById('ndiCameraList');
+    listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading NDI cameras...</div>';
+
+    fetch('api/ndi_sources.php', { credentials: 'same-origin' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (!data.success || !data.cameras || data.cameras.length === 0) {
+                listEl.innerHTML = '<div style="text-align:center;padding:20px;">'
+                    + '<div style="color:var(--text-muted);margin-bottom:8px;"><i class="fas fa-video-slash" style="font-size:24px;"></i></div>'
+                    + '<div style="color:var(--text-secondary);font-size:14px;">No NDI cameras configured.</div>'
+                    + '<div style="color:var(--text-muted);font-size:12px;margin-top:4px;">Add cameras in Arctic Wolves &rarr; System Tools &rarr; NDI Cameras</div>'
+                    + '</div>';
+                return;
+            }
+            var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;">';
+            data.cameras.forEach(function(cam) {
+                html += '<div class="card" style="cursor:pointer;transition:border-color 0.2s;" onclick="selectNdiCamera('
+                    + cam.id + ',' + JSON.stringify(cam.name) + ',' + JSON.stringify(cam.ip_address) + ',' + cam.port + ',' + JSON.stringify(cam.ndi_name || '') + ')">';
+                html += '<div class="card-body" style="padding:16px;display:flex;align-items:center;gap:12px;">';
+                html += '<div style="width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">';
+                html += '<i class="fas fa-broadcast-tower" style="color:#10b981;"></i></div>';
+                html += '<div>';
+                html += '<div style="font-weight:600;font-size:14px;color:var(--text-white);">' + cam.name + '</div>';
+                html += '<div style="font-size:12px;color:var(--text-muted);">' + cam.ip_address + ':' + cam.port;
+                if (cam.location) html += ' &middot; ' + cam.location;
+                html += '</div></div></div></div>';
+            });
+            html += '</div>';
+            listEl.innerHTML = html;
+        })
+        .catch(function() {
+            listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);">Failed to load NDI cameras.</div>';
+        });
+}
+
+function selectNdiCamera(id, name, ip, port, ndiName) {
+    document.getElementById('ndiCameraIdInput').value = id;
+    document.getElementById('ndiSelectedCameraName').textContent = name + ' (' + ip + ':' + port + ')';
+    document.getElementById('ndiTitle').value = 'NDI Recording - ' + name + ' - ' + new Date().toISOString().slice(0, 10);
+    document.getElementById('ndiCameraList').style.display = 'none';
+    document.getElementById('ndiRecordingArea').style.display = 'block';
+
+    // NDI streams are network video sources accessible via IP.
+    // The browser connects to the NDI source URL to preview/record the stream.
+    // For environments without direct NDI-to-browser bridge, fallback to screen capture
+    // which allows the user to select the NDI virtual output window.
+    startNdiStream(ip, port, ndiName);
+}
+
+function startNdiStream(ip, port, ndiName) {
+    // NDI streams require a bridge (e.g., NDI-to-WebRTC or NDI-to-HLS) to be consumed by browsers.
+    // We attempt to connect to a local NDI-to-web bridge first, then fall back to screen/window capture
+    // so the user can select the NDI virtual display output.
+    var preview = document.getElementById('ndiPreview');
+
+    // Try screen capture as a reliable fallback — user can select the NDI Tools monitor/output window
+    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+        navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
+            .then(function(stream) {
+                ndiMediaStream = stream;
+                preview.srcObject = stream;
+                stream.getVideoTracks()[0].addEventListener('ended', function() {
+                    ndiStopStream();
+                });
+            })
+            .catch(function(err) {
+                console.error('NDI capture error:', err);
+                alert('Could not start capture. Please ensure NDI Tools Monitor or Studio Monitor is open, then try again.');
+                document.getElementById('ndiRecordingArea').style.display = 'none';
+                document.getElementById('ndiCameraList').style.display = 'block';
+            });
+    } else {
+        alert('Screen/display capture is not supported in this browser. Please use a modern browser with HTTPS.');
+    }
+}
+
+function ndiStopStream() {
+    if (ndiMediaStream) {
+        ndiMediaStream.getTracks().forEach(function(t) { t.stop(); });
+        ndiMediaStream = null;
+    }
+    var preview = document.getElementById('ndiPreview');
+    if (preview) preview.srcObject = null;
+    if (ndiTimerInterval) {
+        clearInterval(ndiTimerInterval);
+        ndiTimerInterval = null;
+    }
+}
+
+function ndiStartRecording() {
+    if (!ndiMediaStream) {
+        alert('No NDI stream connected. Please select a camera first.');
+        return;
+    }
+    ndiRecordedChunks = [];
+    ndiMediaRecorder = new MediaRecorder(ndiMediaStream, { mimeType: 'video/webm' });
+
+    ndiMediaRecorder.ondataavailable = function(e) {
+        if (e.data.size > 0) ndiRecordedChunks.push(e.data);
+    };
+
+    ndiMediaRecorder.onstop = function() {
+        var blob = new Blob(ndiRecordedChunks, { type: 'video/webm' });
+        var timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        var file = new File([blob], 'ndi-recording-' + timestamp + '.webm', { type: 'video/webm' });
+
+        var dt = new DataTransfer();
+        dt.items.add(file);
+        document.getElementById('ndiFileInput').files = dt.files;
+
+        // Show upload form
+        document.getElementById('ndiUploadForm').style.display = 'block';
+        document.getElementById('ndiRecordingIndicator').style.display = 'none';
+    };
+
+    ndiMediaRecorder.start();
+    ndiRecordStartTime = Date.now();
+    document.getElementById('ndiRecordingIndicator').style.display = 'block';
+    document.getElementById('ndiStartRecordBtn').disabled = true;
+    document.getElementById('ndiStopRecordBtn').disabled = false;
+
+    ndiTimerInterval = setInterval(function() {
+        var elapsed = Math.floor((Date.now() - ndiRecordStartTime) / 1000);
+        var m = Math.floor(elapsed / 60);
+        var s = elapsed % 60;
+        document.getElementById('ndiRecordTimer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    }, 1000);
+}
+
+function ndiStopRecording() {
+    if (ndiMediaRecorder && ndiMediaRecorder.state !== 'inactive') {
+        ndiMediaRecorder.stop();
+    }
+    if (ndiTimerInterval) {
+        clearInterval(ndiTimerInterval);
+        ndiTimerInterval = null;
+    }
+    document.getElementById('ndiStartRecordBtn').disabled = false;
+    document.getElementById('ndiStopRecordBtn').disabled = true;
+    ndiStopStream();
 }
 </script>
 

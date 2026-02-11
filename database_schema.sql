@@ -22,8 +22,9 @@ CREATE TABLE IF NOT EXISTS `vr_video_sources` (
     `team_id` INT UNSIGNED NOT NULL COMMENT 'FK to teams',
     `title` VARCHAR(255) NOT NULL,
     `description` TEXT NULL,
-    `source_type` ENUM('upload','recording','stream') NOT NULL DEFAULT 'upload',
+    `source_type` ENUM('upload','recording','stream','ndi') NOT NULL DEFAULT 'upload',
     `camera_angle` VARCHAR(100) NULL COMMENT 'e.g. wide, tactical, behind_net, bench, ice_level',
+    `ndi_camera_id` INT UNSIGNED NULL COMMENT 'FK to ndi_cameras in main Arctic Wolves DB; used when source_type=ndi',
     `file_path` VARCHAR(500) NULL,
     `file_url` VARCHAR(500) NULL,
     `file_size` BIGINT UNSIGNED NULL COMMENT 'File size in bytes',
@@ -42,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `vr_video_sources` (
     INDEX `idx_vr_video_sources_uploaded_by` (`uploaded_by`),
     INDEX `idx_vr_video_sources_status` (`status`),
     INDEX `idx_vr_video_sources_recorded_at` (`recorded_at`),
+    INDEX `idx_vr_video_sources_ndi_camera` (`ndi_camera_id`),
     CONSTRAINT `fk_vr_video_sources_game` FOREIGN KEY (`game_schedule_id`) REFERENCES `game_schedules` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT `fk_vr_video_sources_team` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_vr_video_sources_uploaded_by` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE

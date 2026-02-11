@@ -283,7 +283,7 @@ The Video Review system extends the existing Arctic Wolves database with 15 tabl
 
 | Table | Purpose |
 |-------|---------|
-| `vr_video_sources` | Multi-camera video files |
+| `vr_video_sources` | Multi-camera video files (upload, recording, stream, NDI) |
 | `vr_video_clips` | Tagged time-range segments |
 | `vr_tags` | Tag definitions (zone, skill, situation, custom) |
 | `vr_clip_tags` | Clip ↔ tag associations |
@@ -315,6 +315,20 @@ docker exec mariadb mysql -u<user> -p<pass> arctic_wolves -e "SHOW TABLES LIKE '
 ```
 
 You should see all 15 `vr_` tables listed.
+
+### NDI Camera Integration
+
+The Video Review system can record from NDI (Network Device Interface) cameras managed in the main Arctic Wolves platform. NDI cameras are configured via **System Tools → NDI Cameras** in the main Arctic Wolves admin dashboard and stored in the shared `ndi_cameras` table.
+
+To use NDI cameras for recording:
+1. Configure NDI cameras in the main Arctic Wolves application under System Tools
+2. Ensure the NDI camera devices are powered on and connected to the network
+3. In the Film Room → Upload tab, click **"Record from NDI Camera"**
+4. Select the desired camera from the list of active NDI sources
+5. Use screen/display capture to select the NDI Tools Monitor or Studio Monitor window
+6. Record the session, then save it with metadata (title, camera angle, game, team)
+
+NDI recordings are stored with `source_type='ndi'` and linked to the originating camera via `ndi_camera_id`.
 
 ---
 

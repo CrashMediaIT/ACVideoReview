@@ -74,6 +74,16 @@ try {
     $game_schedule_id = !empty($_POST['game_schedule_id']) ? (int)$_POST['game_schedule_id'] : null;
     $recorded_at = !empty($_POST['recorded_at']) ? sanitizeInput($_POST['recorded_at']) : null;
 
+    // Determine source type (upload, recording, or ndi)
+    $source_type = 'upload';
+    $ndi_camera_id = null;
+    if (!empty($_POST['source_type']) && in_array($_POST['source_type'], ['upload', 'recording', 'stream', 'ndi'], true)) {
+        $source_type = $_POST['source_type'];
+    }
+    if ($source_type === 'ndi' && !empty($_POST['ndi_camera_id'])) {
+        $ndi_camera_id = (int)$_POST['ndi_camera_id'];
+    }
+
     // Generate unique filename
     $safe_name = preg_replace('/[^a-zA-Z0-9_-]/', '_', pathinfo($original_name, PATHINFO_FILENAME));
     $unique_name = $safe_name . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
@@ -90,21 +100,23 @@ try {
     $stmt = $pdo->prepare(
         "INSERT INTO vr_video_sources
             (game_schedule_id, team_id, title, description, source_type, camera_angle,
-             file_path, file_size, format, uploaded_by, recorded_at, status)
-         VALUES (:game_id, :team_id, :title, :desc, 'upload', :angle,
-                 :path, :size, :format, :uid, :recorded, 'ready')"
+             ndi_camera_id, file_path, file_size, format, uploaded_by, recorded_at, status)
+         VALUES (:game_id, :team_id, :title, :desc, :source_type, :angle,
+                 :ndi_cam_id, :path, :size, :format, :uid, :recorded, 'ready')"
     );
     $stmt->execute([
-        ':game_id'  => $game_schedule_id,
-        ':team_id'  => $team_id,
-        ':title'    => $title,
-        ':desc'     => $description,
-        ':angle'    => $camera_angle,
-        ':path'     => $relative_path,
-        ':size'     => $file_size,
-        ':format'   => $ext,
-        ':uid'      => $user_id,
-        ':recorded' => $recorded_at,
+        ':game_id'     => $game_schedule_id,
+        ':team_id'     => $team_id,
+        ':title'       => $title,
+        ':desc'        => $description,
+        ':source_type' => $source_type,
+        ':angle'       => $camera_angle,
+        ':ndi_cam_id'  => $ndi_camera_id,
+        ':path'        => $relative_path,
+        ':size'        => $file_size,
+        ':format'      => $ext,
+        ':uid'         => $user_id,
+        ':recorded'    => $recorded_at,
     ]);
 
     $_SESSION['success'] = 'Video uploaded successfully.';
