@@ -375,9 +375,10 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                  FROM game_schedules gs
                  LEFT JOIN teams t ON t.id = gs.team_id
                  LEFT JOIN teams t2 ON t2.id = gs.opponent_team_id
+                 WHERE gs.team_id IN (SELECT team_id FROM team_coach_assignments WHERE coach_id = :uid)
                  ORDER BY gs.game_date DESC
                  LIMIT 50",
-                []
+                [':uid' => $user_id]
             );
         } else {
             $stmt = dbQuery($pdo,
@@ -643,13 +644,14 @@ $filterSeason = isset($_GET['season']) ? sanitizeInput($_GET['season']) : 'curre
 if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
     try {
         if ($isCoach) {
-            // Coaches see all opponent teams
+            // Coaches see opponent teams from their assigned teams' games
             $stmt = dbQuery($pdo,
                 "SELECT DISTINCT t.id, t.team_name
                  FROM teams t
                  INNER JOIN game_schedules gs ON gs.opponent_team_id = t.id
+                 WHERE gs.team_id IN (SELECT team_id FROM team_coach_assignments WHERE coach_id = :uid)
                  ORDER BY t.team_name ASC",
-                []
+                [':uid' => $user_id]
             );
         } else {
             // Athletes see only teams in their age group, current + 1 past year
@@ -682,6 +684,12 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                 $dateFilter = " AND gs.game_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)";
             }
 
+            $teamFilter = '';
+            if ($isCoach) {
+                $teamFilter = " AND gs.team_id IN (SELECT team_id FROM team_coach_assignments WHERE coach_id = :uid)";
+                $params[':uid'] = $user_id;
+            }
+
             $sql = "SELECT vc.id, vc.title, vc.thumbnail_path, vc.duration, vc.created_at,
                            vc.game_schedule_id, vc.clip_file_path,
                            vs.camera_angle,
@@ -697,6 +705,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                     LEFT JOIN vr_tags vt ON vt.id = ct.tag_id
                     WHERE gs.opponent_team_id = :opp_id
                     {$dateFilter}
+                    {$teamFilter}
                     GROUP BY vc.id
                     ORDER BY gs.game_date DESC, vc.start_time ASC
                     LIMIT 50";

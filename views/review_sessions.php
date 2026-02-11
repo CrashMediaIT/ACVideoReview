@@ -67,9 +67,10 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
              FROM game_schedules gs
              LEFT JOIN teams t ON t.id = gs.team_id
              LEFT JOIN teams t2 ON t2.id = gs.opponent_team_id
+             WHERE gs.team_id IN (SELECT team_id FROM team_coach_assignments WHERE coach_id = :uid)
              ORDER BY gs.game_date DESC
              LIMIT 50",
-            []
+            [':uid' => $user_id]
         );
         $games = $stmt->fetchAll();
     } catch (PDOException $e) {

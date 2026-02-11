@@ -55,8 +55,9 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
         $stmt = dbQuery($pdo,
             "SELECT COUNT(*) AS cnt FROM game_schedules
              WHERE game_date >= CURDATE()
-             AND game_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)",
-            []
+             AND game_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+             AND team_id IN (SELECT team_id FROM team_coach_assignments WHERE coach_id = :uid)",
+            [':uid' => $user_id]
         );
         $statUpcomingGames = (int)($stmt->fetch()['cnt'] ?? 0);
     } catch (PDOException $e) {
