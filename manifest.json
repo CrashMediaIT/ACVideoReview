@@ -1,0 +1,23 @@
+{
+  "name": "Arctic Wolves Video Review",
+  "short_name": "Video Review",
+  "description": "Comprehensive sports video review system for Arctic Wolves",
+  "start_url": "/dashboard.php",
+  "display": "standalone",
+  "background_color": "#0A0A0F",
+  "theme_color": "#0A0A0F",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "css/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "css/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["sports", "productivity"]
+}
