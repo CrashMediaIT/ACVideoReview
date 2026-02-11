@@ -1,0 +1,39 @@
+# Environment files
+*.env
+.env
+config/*.env
+
+# Upload directories
+uploads/videos/*
+uploads/thumbnails/*
+uploads/imports/*
+!uploads/videos/.gitkeep
+!uploads/thumbnails/.gitkeep
+!uploads/imports/.gitkeep
+
+# Temporary files
+tmp/*
+!tmp/.gitkeep
+
+# Logs
+logs/*
+!logs/.gitkeep
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+vendor/
+
+# Cache
+cache/*
+!cache/.gitkeep
