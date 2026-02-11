@@ -5,6 +5,7 @@ A comprehensive sports video review system for hockey coaches and athletes. Runs
 ## Features
 
 - **Video Management** — Upload, organize, and manage multi-camera game footage
+- **NDI Camera Support** — Record directly from NDI network cameras configured in the main Arctic Wolves platform
 - **Clip Editor** — Create tagged time-range segments from source videos
 - **Tagging System** — Zone, skill, situation, and custom tags for clip categorization
 - **Game Plans** — Pre-game, post-game, and practice strategy builder with line assignments
