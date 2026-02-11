@@ -39,7 +39,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
     }
 
     try {
-        // Total clips this season
+        // Total clips (last 6 months)
         $stmt = dbQuery($pdo,
             "SELECT COUNT(*) AS cnt FROM vr_video_clips
              WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)",
@@ -201,7 +201,7 @@ $videoStatusBadge = [
     <div class="stat-card">
         <div class="stat-icon" style="color:var(--success);"><i class="fas fa-cut"></i></div>
         <div class="stat-number"><?= $statTotalClips ?></div>
-        <div class="stat-label">Total Clips (Season)</div>
+        <div class="stat-label">Clips (6 Months)</div>
     </div>
     <div class="stat-card">
         <div class="stat-icon" style="color:var(--info);"><i class="fas fa-calendar-alt"></i></div>

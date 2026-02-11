@@ -105,7 +105,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
         if ($isCoach) {
             // Coaches see all clips
             $sql = "SELECT vc.id, vc.title, vc.description, vc.thumbnail_path, vc.duration,
-                           vc.created_at, vc.game_schedule_id, vc.is_published,
+                           vc.created_at, vc.game_schedule_id, vc.is_published, vc.clip_file_path,
                            vs.camera_angle, vs.title AS source_title,
                            GROUP_CONCAT(DISTINCT vt.name ORDER BY vt.category SEPARATOR ', ') AS tag_names,
                            GROUP_CONCAT(DISTINCT vt.color SEPARATOR ',') AS tag_colors,
@@ -117,7 +117,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
         } else {
             // Athletes only see clips they're tagged in
             $sql = "SELECT vc.id, vc.title, vc.description, vc.thumbnail_path, vc.duration,
-                           vc.created_at, vc.game_schedule_id, vc.is_published,
+                           vc.created_at, vc.game_schedule_id, vc.is_published, vc.clip_file_path,
                            vs.camera_angle, vs.title AS source_title,
                            ca.role_in_clip,
                            GROUP_CONCAT(DISTINCT vt.name ORDER BY vt.category SEPARATOR ', ') AS tag_names,
@@ -312,7 +312,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
             </h3>
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;">
                 <?php foreach ($catClips as $clip): ?>
-                    <div class="clip-card" data-clip-id="<?= (int)$clip['id'] ?>" style="cursor:pointer;">
+                    <div class="clip-card" data-clip-id="<?= (int)$clip['id'] ?>" data-clip-file="<?= htmlspecialchars($clip['clip_file_path'] ?? '') ?>" style="cursor:pointer;">
                         <div class="clip-thumbnail">
                             <?php if (!empty($clip['thumbnail_path'])): ?>
                                 <img src="<?= htmlspecialchars($clip['thumbnail_path']) ?>" alt="Clip thumbnail" loading="lazy">
@@ -408,7 +408,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
             $params = [':gid' => $selectedGameId];
             if ($isCoach) {
                 $sql = "SELECT vc.id, vc.title, vc.thumbnail_path, vc.duration, vc.created_at,
-                               vs.camera_angle,
+                               vc.clip_file_path, vs.camera_angle,
                                GROUP_CONCAT(DISTINCT vt.name SEPARATOR ', ') AS tag_names,
                                GROUP_CONCAT(DISTINCT vt.color SEPARATOR ',') AS tag_colors
                         FROM vr_video_clips vc
@@ -420,7 +420,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                         ORDER BY vc.start_time ASC";
             } else {
                 $sql = "SELECT vc.id, vc.title, vc.thumbnail_path, vc.duration, vc.created_at,
-                               vs.camera_angle, ca.role_in_clip,
+                               vc.clip_file_path, vs.camera_angle, ca.role_in_clip,
                                GROUP_CONCAT(DISTINCT vt.name SEPARATOR ', ') AS tag_names,
                                GROUP_CONCAT(DISTINCT vt.color SEPARATOR ',') AS tag_colors
                         FROM vr_video_clips vc
@@ -590,7 +590,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                         <?php else: ?>
                             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
                                 <?php foreach ($gameClips as $gc): ?>
-                                    <div class="clip-card" data-clip-id="<?= (int)$gc['id'] ?>" style="cursor:pointer;">
+                                    <div class="clip-card" data-clip-id="<?= (int)$gc['id'] ?>" data-clip-file="<?= htmlspecialchars($gc['clip_file_path'] ?? '') ?>" style="cursor:pointer;">
                                         <div class="clip-thumbnail">
                                             <?php if (!empty($gc['thumbnail_path'])): ?>
                                                 <img src="<?= htmlspecialchars($gc['thumbnail_path']) ?>" alt="" loading="lazy">
@@ -683,7 +683,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
             }
 
             $sql = "SELECT vc.id, vc.title, vc.thumbnail_path, vc.duration, vc.created_at,
-                           vc.game_schedule_id,
+                           vc.game_schedule_id, vc.clip_file_path,
                            vs.camera_angle,
                            gs.game_date, gs.location, gs.home_score, gs.away_score,
                            t_home.team_name AS home_team,
@@ -785,7 +785,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
             <div class="card-body">
                 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
                     <?php foreach ($gClips as $oc): ?>
-                        <div class="clip-card" data-clip-id="<?= (int)$oc['id'] ?>" style="cursor:pointer;">
+                        <div class="clip-card" data-clip-id="<?= (int)$oc['id'] ?>" data-clip-file="<?= htmlspecialchars($oc['clip_file_path'] ?? '') ?>" style="cursor:pointer;">
                             <div class="clip-thumbnail">
                                 <?php if (!empty($oc['thumbnail_path'])): ?>
                                     <img src="<?= htmlspecialchars($oc['thumbnail_path']) ?>" alt="" loading="lazy">
@@ -843,26 +843,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // Clip card click → open video player
     document.querySelectorAll('.clip-card[data-clip-id]').forEach(function(card) {
         card.addEventListener('click', function() {
-            const clipId = this.dataset.clipId;
-            const overlay = document.getElementById('videoPlayerOverlay');
-            const titleEl = document.getElementById('videoPlayerTitle');
-            const titleText = this.querySelector('.truncate');
+            var clipFile = this.dataset.clipFile;
+            var overlay = document.getElementById('videoPlayerOverlay');
+            var player = document.getElementById('clipVideoPlayer');
+            var titleEl = document.getElementById('videoPlayerTitle');
+            var titleText = this.querySelector('.truncate');
             if (titleText) titleEl.textContent = titleText.textContent.trim();
+            if (clipFile) {
+                player.src = clipFile;
+                player.load();
+            }
             overlay.style.display = 'flex';
         });
     });
 
     // Close video overlay
-    document.getElementById('closeVideoPlayer')?.addEventListener('click', function() {
-        const overlay = document.getElementById('videoPlayerOverlay');
+    function closeVideoPlayer() {
+        var overlay = document.getElementById('videoPlayerOverlay');
+        var player = document.getElementById('clipVideoPlayer');
         overlay.style.display = 'none';
-        document.getElementById('clipVideoPlayer').pause();
-    });
+        player.pause();
+        player.removeAttribute('src');
+    }
+    document.getElementById('closeVideoPlayer')?.addEventListener('click', closeVideoPlayer);
     document.getElementById('videoPlayerOverlay')?.addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.style.display = 'none';
-            document.getElementById('clipVideoPlayer').pause();
-        }
+        if (e.target === this) closeVideoPlayer();
     });
 });
 </script>
