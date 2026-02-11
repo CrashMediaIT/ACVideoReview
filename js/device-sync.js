@@ -21,6 +21,8 @@
         this.pollInterval = null;
         this.heartbeatInterval = null;
         this.sessionId = null;
+        this.pollIntervalMs = options.pollIntervalMs || 3000;
+        this.heartbeatIntervalMs = options.heartbeatIntervalMs || 10000;
         this.onStatusChange = options.onStatusChange || function() {};
         this.onCommand = options.onCommand || function() {};
         this.onError = options.onError || function() {};
@@ -85,7 +87,7 @@
         var self = this;
         this.pollInterval = setInterval(function() {
             self._poll();
-        }, 3000);
+        }, self.pollIntervalMs);
     };
 
     DeviceSync.prototype._poll = function() {
@@ -120,7 +122,7 @@
         var self = this;
         this.heartbeatInterval = setInterval(function() {
             self._sendHeartbeat();
-        }, 10000);
+        }, self.heartbeatIntervalMs);
     };
 
     DeviceSync.prototype._sendHeartbeat = function() {

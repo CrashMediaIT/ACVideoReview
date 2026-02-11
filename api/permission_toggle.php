@@ -78,8 +78,16 @@ try {
     $existing = $stmt->fetch();
 
     if ($existing) {
-        // Update existing permission
-        $sql = "UPDATE vr_video_permissions SET `$permission` = :val, updated_at = NOW() WHERE user_id = :uid AND team_id = :tid";
+        // Update existing permission using column whitelist mapping
+        $columnMap = [
+            'can_upload' => 'can_upload',
+            'can_clip' => 'can_clip',
+            'can_tag' => 'can_tag',
+            'can_publish' => 'can_publish',
+            'can_delete' => 'can_delete',
+        ];
+        $safeColumn = $columnMap[$permission];
+        $sql = "UPDATE vr_video_permissions SET $safeColumn = :val, updated_at = NOW() WHERE user_id = :uid AND team_id = :tid";
         dbQuery($pdo, $sql, [':val' => $value, ':uid' => $target_user_id, ':tid' => $team_id]);
     } else {
         // Insert new permission record with all defaults

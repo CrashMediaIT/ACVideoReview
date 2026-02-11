@@ -66,11 +66,11 @@
        CSRF Token Utility
     -------------------------------------------------- */
     function getCSRFToken() {
-        var meta = document.querySelector('input[name="csrf_token"]');
-        if (meta) return meta.value;
-        // Fallback: try to read from any hidden input on the page
-        var hidden = document.querySelector('[name="csrf_token"]');
-        return hidden ? hidden.value : '';
+        var input = document.querySelector('input[name="csrf_token"]');
+        if (input) return input.value;
+        // Fallback: try to read from a data attribute on the body
+        var bodyToken = document.body.dataset.csrfToken;
+        return bodyToken || '';
     }
 
     // Expose globally for use by other scripts

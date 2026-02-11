@@ -228,7 +228,7 @@ $colorOptions = [
 </div>
 
 <!-- Video + Canvas -->
-<div class="telestrate-wrapper">
+<div class="telestrate-wrapper" data-csrf-token="<?= htmlspecialchars($csrf_token) ?>">
     <div class="telestrate-video-container" id="telestrateVideoContainer">
         <video class="video-player" id="telestrateVideo" controls <?= $videoSrc ? 'src="' . htmlspecialchars($videoSrc) . '"' : '' ?>>
             Your browser does not support HTML5 video.
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var currentTime = video ? video.currentTime : 0;
 
             var formData = new FormData();
-            formData.append('csrf_token', '<?= htmlspecialchars($csrf_token) ?>');
+            formData.append('csrf_token', document.querySelector('.telestrate-wrapper').dataset.csrfToken || '');
             formData.append('canvas_data', data);
             formData.append('video_time', currentTime);
             <?php if ($clipId): ?>

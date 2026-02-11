@@ -81,7 +81,7 @@ $statusColors = [
 </div>
 
 <!-- Start New Session -->
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;" data-csrf-token="<?= htmlspecialchars($csrf_token) ?>" id="pairDeviceContainer">
     <!-- Viewer Mode -->
     <div class="card">
         <div class="card-header">
@@ -172,7 +172,7 @@ $statusColors = [
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var csrfToken = '<?= htmlspecialchars($csrf_token) ?>';
+    var csrfToken = document.getElementById('pairDeviceContainer').dataset.csrfToken || '';
 
     // Start Viewer
     var startViewerBtn = document.getElementById('startViewerBtn');
@@ -220,8 +220,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (joinBtn) {
         joinBtn.addEventListener('click', function() {
             var code = document.getElementById('controllerCodeInput').value.trim();
-            if (!code || code.length < 4) {
-                alert('Please enter a valid pairing code.');
+            if (!code || code.length !== 6) {
+                alert('Please enter a valid 6-digit pairing code.');
                 return;
             }
 
