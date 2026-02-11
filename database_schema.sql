@@ -350,4 +350,59 @@ CREATE TABLE IF NOT EXISTS `vr_notifications` (
     CONSTRAINT `fk_vr_notifications_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Video review specific notifications';
 
+-- =====================================================================
+-- 14. DEVICE PAIRING (Dual-device: viewer + controller)
+-- =====================================================================
+
+CREATE TABLE IF NOT EXISTS `vr_device_sessions` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `session_code` VARCHAR(8) NOT NULL COMMENT 'Short pairing code shown on viewer',
+    `user_id` INT UNSIGNED NOT NULL COMMENT 'FK to users',
+    `viewer_device_id` VARCHAR(255) NULL COMMENT 'Browser fingerprint / device id of viewer',
+    `controller_device_id` VARCHAR(255) NULL COMMENT 'Browser fingerprint / device id of controller',
+    `current_video_id` INT UNSIGNED NULL COMMENT 'Currently playing vr_video_sources id',
+    `current_clip_id` INT UNSIGNED NULL COMMENT 'Currently playing vr_video_clips id',
+    `playback_time` DECIMAL(10,3) NULL COMMENT 'Current playback position in seconds',
+    `is_playing` TINYINT(1) NOT NULL DEFAULT 0,
+    `status` ENUM('waiting','paired','active','expired') NOT NULL DEFAULT 'waiting',
+    `paired_at` DATETIME NULL,
+    `last_heartbeat` DATETIME NULL COMMENT 'Last ping from either device',
+    `expires_at` DATETIME NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `idx_vr_device_sessions_code` (`session_code`),
+    INDEX `idx_vr_device_sessions_user` (`user_id`),
+    INDEX `idx_vr_device_sessions_status` (`status`),
+    INDEX `idx_vr_device_sessions_expires` (`expires_at`),
+    CONSTRAINT `fk_vr_device_sessions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Pairs a viewer device with a controller device for live telestration';
+
+-- =====================================================================
+-- 15. TELESTRATION ANNOTATIONS (Live draw on video)
+-- =====================================================================
+
+CREATE TABLE IF NOT EXISTS `vr_telestrations` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `clip_id` INT UNSIGNED NULL COMMENT 'FK to vr_video_clips; NULL for source-level annotations',
+    `source_video_id` INT UNSIGNED NULL COMMENT 'FK to vr_video_sources',
+    `created_by` INT UNSIGNED NOT NULL COMMENT 'FK to users',
+    `title` VARCHAR(255) NULL,
+    `video_time` DECIMAL(10,3) NOT NULL COMMENT 'Timestamp in seconds where annotation appears',
+    `duration` DECIMAL(10,3) NULL DEFAULT 3.000 COMMENT 'How long annotation is visible (seconds)',
+    `canvas_data` LONGTEXT NOT NULL COMMENT 'JSON: strokes, shapes, arrows, text drawn on canvas',
+    `canvas_width` INT NOT NULL DEFAULT 1920 COMMENT 'Reference canvas width for scaling',
+    `canvas_height` INT NOT NULL DEFAULT 1080 COMMENT 'Reference canvas height for scaling',
+    `is_saved` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '0=live only, 1=persisted',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_vr_telestrations_clip` (`clip_id`),
+    INDEX `idx_vr_telestrations_source` (`source_video_id`),
+    INDEX `idx_vr_telestrations_time` (`video_time`),
+    INDEX `idx_vr_telestrations_created_by` (`created_by`),
+    CONSTRAINT `fk_vr_telestrations_clip` FOREIGN KEY (`clip_id`) REFERENCES `vr_video_clips` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_vr_telestrations_source` FOREIGN KEY (`source_video_id`) REFERENCES `vr_video_sources` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_vr_telestrations_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Telestration annotations drawn on video frames';
+
 SET FOREIGN_KEY_CHECKS = 1;
