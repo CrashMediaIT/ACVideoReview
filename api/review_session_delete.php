@@ -42,16 +42,16 @@ if (!in_array($user_role, COACH_ROLES, true)) {
 }
 
 try {
-    // Verify session exists
-    $stmt = $pdo->prepare("SELECT id FROM vr_review_sessions WHERE id = :id");
-    $stmt->execute([':id' => $session_id]);
+    // Verify session exists and user owns it
+    $stmt = $pdo->prepare("SELECT id FROM vr_review_sessions WHERE id = :id AND created_by = :uid");
+    $stmt->execute([':id' => $session_id, ':uid' => $user_id]);
     if (!$stmt->fetch()) {
         throw new Exception('Review session not found.');
     }
 
     // Delete from database (cascades to session clips)
-    $stmt = $pdo->prepare("DELETE FROM vr_review_sessions WHERE id = :id");
-    $stmt->execute([':id' => $session_id]);
+    $stmt = $pdo->prepare("DELETE FROM vr_review_sessions WHERE id = :id AND created_by = :uid");
+    $stmt->execute([':id' => $session_id, ':uid' => $user_id]);
 
     $_SESSION['success'] = 'Review session deleted successfully.';
 } catch (Exception $e) {

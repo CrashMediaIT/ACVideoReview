@@ -209,16 +209,6 @@ $sessionTypeIcons = [
                         </div>
                     </div>
                     <div style="display:flex;gap:8px;">
-                        <?php if (!$isCompleted): ?>
-                            <form action="api/review_session_save.php" method="POST" style="display:inline;">
-                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
-                                <input type="hidden" name="session_id" value="<?= (int)$session['id'] ?>">
-                                <input type="hidden" name="title" value="<?= htmlspecialchars($session['title']) ?>">
-                                <input type="hidden" name="description" value="<?= htmlspecialchars($session['description'] ?? '') ?>">
-                                <input type="hidden" name="session_type" value="<?= htmlspecialchars($session['session_type']) ?>">
-                                <input type="hidden" name="scheduled_at" value="<?= htmlspecialchars(date('Y-m-d\TH:i', strtotime($session['scheduled_at']))) ?>">
-                            </form>
-                        <?php endif; ?>
                         <form action="api/review_session_delete.php" method="POST" style="display:inline;"
                               onsubmit="return confirm('Delete this review session?');">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
