@@ -55,7 +55,8 @@ try {
     }
 
     // Validate canvas_data is valid JSON
-    if (json_decode($canvas_data) === null && $canvas_data !== 'null') {
+    json_decode($canvas_data);
+    if (json_last_error() !== JSON_ERROR_NONE) {
         throw new Exception('Invalid canvas data format.');
     }
 
