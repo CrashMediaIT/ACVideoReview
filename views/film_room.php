@@ -127,11 +127,12 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
             $stmt = dbQuery($pdo,
                 "SELECT vs.id, vs.title, vs.description, vs.camera_angle, vs.duration_seconds,
                         vs.thumbnail_path, vs.status, vs.file_path, vs.file_url, vs.file_size,
-                        vs.format, vs.resolution, vs.source_type, vs.recorded_at,
+                        vs.format, vs.resolution, vs.source_type, vs.ndi_camera_id, vs.recorded_at,
                         vs.created_at, vs.game_schedule_id, vs.team_id,
                         t.team_name,
                         gs.game_date, t2.team_name AS opponent_name,
-                        u.first_name AS uploader_first, u.last_name AS uploader_last
+                        u.first_name AS uploader_first, u.last_name AS uploader_last,
+                        NULL AS ndi_camera_name
                  FROM vr_video_sources vs
                  LEFT JOIN teams t ON t.id = vs.team_id
                  LEFT JOIN game_schedules gs ON gs.id = vs.game_schedule_id
@@ -651,21 +652,37 @@ function loadNdiCameras() {
                     + '</div>';
                 return;
             }
-            var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;">';
+            var container = document.createElement('div');
+            container.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;';
             data.cameras.forEach(function(cam) {
-                html += '<div class="card" style="cursor:pointer;transition:border-color 0.2s;" onclick="selectNdiCamera('
-                    + cam.id + ',' + JSON.stringify(cam.name) + ',' + JSON.stringify(cam.ip_address) + ',' + cam.port + ',' + JSON.stringify(cam.ndi_name || '') + ')">';
-                html += '<div class="card-body" style="padding:16px;display:flex;align-items:center;gap:12px;">';
-                html += '<div style="width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">';
-                html += '<i class="fas fa-broadcast-tower" style="color:#10b981;"></i></div>';
-                html += '<div>';
-                html += '<div style="font-weight:600;font-size:14px;color:var(--text-white);">' + cam.name + '</div>';
-                html += '<div style="font-size:12px;color:var(--text-muted);">' + cam.ip_address + ':' + cam.port;
-                if (cam.location) html += ' &middot; ' + cam.location;
-                html += '</div></div></div></div>';
+                var card = document.createElement('div');
+                card.className = 'card';
+                card.style.cssText = 'cursor:pointer;transition:border-color 0.2s;';
+                card.addEventListener('click', (function(c) {
+                    return function() { selectNdiCamera(c.id, c.name, c.ip_address, c.port, c.ndi_name || ''); };
+                })(cam));
+                var body = document.createElement('div');
+                body.className = 'card-body';
+                body.style.cssText = 'padding:16px;display:flex;align-items:center;gap:12px;';
+                var iconWrap = document.createElement('div');
+                iconWrap.style.cssText = 'width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;';
+                iconWrap.innerHTML = '<i class="fas fa-broadcast-tower" style="color:#10b981;"></i>';
+                var info = document.createElement('div');
+                var nameEl = document.createElement('div');
+                nameEl.style.cssText = 'font-weight:600;font-size:14px;color:var(--text-white);';
+                nameEl.textContent = cam.name;
+                var detailEl = document.createElement('div');
+                detailEl.style.cssText = 'font-size:12px;color:var(--text-muted);';
+                detailEl.textContent = cam.ip_address + ':' + cam.port + (cam.location ? ' \u00B7 ' + cam.location : '');
+                info.appendChild(nameEl);
+                info.appendChild(detailEl);
+                body.appendChild(iconWrap);
+                body.appendChild(info);
+                card.appendChild(body);
+                container.appendChild(card);
             });
-            html += '</div>';
-            listEl.innerHTML = html;
+            listEl.innerHTML = '';
+            listEl.appendChild(container);
         })
         .catch(function() {
             listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);">Failed to load NDI cameras.</div>';
@@ -732,16 +749,30 @@ function ndiStartRecording() {
         return;
     }
     ndiRecordedChunks = [];
-    ndiMediaRecorder = new MediaRecorder(ndiMediaStream, { mimeType: 'video/webm' });
+
+    // Determine supported mime type for recording
+    var mimeType = 'video/webm';
+    var mimeOptions = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'];
+    for (var i = 0; i < mimeOptions.length; i++) {
+        if (MediaRecorder.isTypeSupported(mimeOptions[i])) {
+            mimeType = mimeOptions[i];
+            break;
+        }
+    }
+
+    ndiMediaRecorder = new MediaRecorder(ndiMediaStream, { mimeType: mimeType });
+
+    var recordExt = mimeType.indexOf('mp4') !== -1 ? 'mp4' : 'webm';
+    var recordMime = mimeType.indexOf('mp4') !== -1 ? 'video/mp4' : 'video/webm';
 
     ndiMediaRecorder.ondataavailable = function(e) {
         if (e.data.size > 0) ndiRecordedChunks.push(e.data);
     };
 
     ndiMediaRecorder.onstop = function() {
-        var blob = new Blob(ndiRecordedChunks, { type: 'video/webm' });
+        var blob = new Blob(ndiRecordedChunks, { type: recordMime });
         var timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-        var file = new File([blob], 'ndi-recording-' + timestamp + '.webm', { type: 'video/webm' });
+        var file = new File([blob], 'ndi-recording-' + timestamp + '.' + recordExt, { type: recordMime });
 
         var dt = new DataTransfer();
         dt.items.add(file);

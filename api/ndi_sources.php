@@ -50,8 +50,8 @@ try {
 } catch (PDOException $e) {
     error_log('NDI sources API error: ' . $e->getMessage());
     echo json_encode([
-        'success' => true,
+        'success' => false,
         'cameras' => [],
-        'note'    => 'NDI cameras table not available. Configure cameras in Arctic Wolves System Tools.',
+        'error'   => 'NDI cameras table not available. Configure cameras in Arctic Wolves System Tools.',
     ]);
 }
