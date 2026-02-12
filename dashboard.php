@@ -256,7 +256,7 @@ $csrf_token = generateCsrfToken();
     <header class="top-bar">
         <div class="top-bar-left">
             <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
-                <i class="fas fa-bars"></i>
+                <i class="fa-solid fa-bars"></i>
             </button>
         </div>
         <div class="top-bar-right">
@@ -381,8 +381,8 @@ overlay.addEventListener('click', () => {
 <div class="modal-overlay" id="hwSettingsModal">
     <div class="modal" style="max-width:620px;">
         <div class="modal-header">
-            <h3><i class="fas fa-microchip" style="color:var(--primary-light);margin-right:8px;"></i> Hardware Acceleration Settings</h3>
-            <button class="modal-close" data-modal-close aria-label="Close"><i class="fas fa-times"></i></button>
+            <h3><i class="fa-solid fa-microchip" style="color:var(--primary-light);margin-right:8px;"></i> Hardware Acceleration Settings</h3>
+            <button class="modal-close" data-modal-close aria-label="Close"><i class="fa-solid fa-times"></i></button>
         </div>
         <div class="modal-body" id="hwSettingsBody">
             <!-- Populated by JS -->
@@ -393,7 +393,7 @@ overlay.addEventListener('click', () => {
         </div>
         <div class="modal-footer">
             <button class="btn btn-secondary" data-modal-close>Cancel</button>
-            <button class="btn btn-primary" id="hwSettingsSave"><i class="fas fa-save"></i> Save Settings</button>
+            <button class="btn btn-primary" id="hwSettingsSave"><i class="fa-solid fa-save"></i> Save Settings</button>
         </div>
     </div>
 </div>
@@ -549,8 +549,8 @@ overlay.addEventListener('click', () => {
 
         /* ── Device info ── */
         html += '<div class="card" style="margin-bottom:16px;">';
-        html += '<div class="card-header"><h4 style="font-size:0.9rem;"><i class="fas fa-desktop" style="color:var(--primary-light);margin-right:8px;"></i>Detected Device</h4>';
-        html += '<span class="hw-accel-badge ' + hwBadgeClass + '"><i class="fas ' + hwIcon + '"></i> ' + escHtml(hwLabel) + '</span></div>';
+        html += '<div class="card-header"><h4 style="font-size:0.9rem;"><i class="fa-solid fa-desktop" style="color:var(--primary-light);margin-right:8px;"></i>Detected Device</h4>';
+        html += '<span class="hw-accel-badge ' + hwBadgeClass + '"><i class="fa-solid ' + hwIcon + '"></i> ' + escHtml(hwLabel) + '</span></div>';
         html += '<div class="card-body" style="padding:14px 18px;">';
         html += '<div class="analysis-metric"><span class="metric-label">GPU</span><span class="metric-value">' + escHtml(deviceName) + '</span></div>';
         if (vendorName) {
@@ -596,14 +596,14 @@ overlay.addEventListener('click', () => {
         var codecOpts = [{ value: 'auto', label: 'Auto', desc: 'Best available' }];
         caps.supportedCodecs.forEach(function(c) {
             var val = c.codec.split('.')[0].replace('avc1', 'h264').replace('hev1', 'h265').replace('vp09', 'vp9').replace('av01', 'av1');
-            var accelTag = c.hwAccel === 'yes' ? ' <span class="hw-accel-badge" style="font-size:0.6rem;padding:1px 5px;"><i class="fas fa-bolt"></i> HW</span>'
+            var accelTag = c.hwAccel === 'yes' ? ' <span class="hw-accel-badge" style="font-size:0.6rem;padding:1px 5px;"><i class="fa-solid fa-bolt"></i> HW</span>'
                          : c.hwAccel === 'software' ? ' <span class="hw-accel-badge unavailable" style="font-size:0.6rem;padding:1px 5px;">SW</span>' : '';
             codecOpts.push({ value: val, label: c.label + accelTag, desc: c.smooth ? 'Smooth playback' : '' });
         });
         codecOpts.forEach(function(opt) {
             var active = settings.preferredCodec === opt.value ? ' active' : '';
             html += '<div class="codec-card' + active + '" data-setting="preferredCodec" data-value="' + escAttr(opt.value) + '">';
-            html += '<div class="codec-icon"><i class="fas fa-film"></i></div>';
+            html += '<div class="codec-icon"><i class="fa-solid fa-film"></i></div>';
             html += '<div class="codec-info"><div class="codec-name">' + opt.label + '</div>';
             if (opt.desc) html += '<div class="codec-desc">' + escHtml(opt.desc) + '</div>';
             html += '</div></div>';
@@ -709,7 +709,7 @@ overlay.addEventListener('click', () => {
         options.forEach(function(opt) {
             var active = currentValue === opt.value ? ' active' : '';
             html += '<div class="codec-card' + active + '" data-radio-name="' + escAttr(name) + '" data-radio-value="' + escAttr(opt.value) + '" style="cursor:pointer;">';
-            html += '<div class="codec-icon"><i class="fas fa-' + (active ? 'dot-circle' : 'circle') + '"></i></div>';
+            html += '<div class="codec-icon"><i class="fa-solid fa-' + (active ? 'dot-circle' : 'circle') + '"></i></div>';
             html += '<div class="codec-info"><div class="codec-name">' + escHtml(opt.label) + '</div>';
             if (opt.desc) html += '<div class="codec-desc">' + escHtml(opt.desc) + '</div>';
             html += '</div></div>';
@@ -721,7 +721,7 @@ overlay.addEventListener('click', () => {
     function buildToggle(key, label, desc, checked) {
         var active = checked ? ' active' : '';
         var html = '<div class="hw-toggle codec-card' + active + '" data-toggle="' + escAttr(key) + '" style="cursor:pointer;margin-bottom:6px;">';
-        html += '<div class="codec-icon" style="background:' + (checked ? 'rgba(16,185,129,0.12)' : 'rgba(107,70,193,0.12)') + ';color:' + (checked ? 'var(--success)' : 'var(--text-muted)') + ';"><i class="fas fa-' + (checked ? 'toggle-on' : 'toggle-off') + '"></i></div>';
+        html += '<div class="codec-icon" style="background:' + (checked ? 'rgba(16,185,129,0.12)' : 'rgba(107,70,193,0.12)') + ';color:' + (checked ? 'var(--success)' : 'var(--text-muted)') + ';"><i class="fa-solid fa-' + (checked ? 'toggle-on' : 'toggle-off') + '"></i></div>';
         html += '<div class="codec-info"><div class="codec-name">' + escHtml(label) + '</div>';
         if (desc) html += '<div class="codec-desc">' + escHtml(desc) + '</div>';
         html += '</div></div>';

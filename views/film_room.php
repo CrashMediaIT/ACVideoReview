@@ -241,9 +241,8 @@ $readyVideos = array_filter($videos, function($v) { return $v['status'] === 'rea
 
 <!-- Page Header -->
 <div class="page-header">
-    <div class="page-header-icon"><i class="fas fa-video"></i></div>
-    <div class="page-header-info">
-        <h1 class="page-title">Film Room</h1>
+    <div class="page-header-content">
+        <h1 class="page-title"><i class="fa-solid fa-video"></i> Film Room</h1>
         <p class="page-description">Upload, review, and break down game footage</p>
     </div>
 </div>
@@ -253,15 +252,15 @@ $readyVideos = array_filter($videos, function($v) { return $v['status'] === 'rea
     <div class="page-tabs">
         <a href="?page=film_room&tab=upload"
            class="page-tab <?= $activeTab === 'upload' ? 'active' : '' ?>">
-            <i class="fas fa-upload"></i> Upload &amp; Manage
+            <i class="fa-solid fa-upload"></i> Upload &amp; Manage
         </a>
         <a href="?page=film_room&tab=clip_editor"
            class="page-tab <?= $activeTab === 'clip_editor' ? 'active' : '' ?>">
-            <i class="fas fa-cut"></i> Clip Editor
+            <i class="fa-solid fa-scissors"></i> Clip Editor
         </a>
         <a href="?page=film_room&tab=multi_camera"
            class="page-tab <?= $activeTab === 'multi_camera' ? 'active' : '' ?>">
-            <i class="fas fa-th-large"></i> Multi-Camera
+            <i class="fa-solid fa-th-large"></i> Multi-Camera
         </a>
     </div>
 </div>
@@ -276,13 +275,13 @@ if ($activeTab === 'upload'):
 <!-- Upload Form -->
 <div class="card" style="margin-bottom:24px;">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-        <h3><i class="fas fa-cloud-upload-alt"></i> Upload Video</h3>
+        <h3><i class="fa-solid fa-cloud-upload-alt"></i> Upload Video</h3>
         <div style="display:flex;gap:8px;">
             <button type="button" class="btn btn-sm btn-outline" data-action="record-ndi" onclick="openNdiRecordPanel()">
-                <i class="fas fa-broadcast-tower"></i> Record from NDI Camera
+                <i class="fa-solid fa-broadcast-tower"></i> Record from NDI Camera
             </button>
             <button type="button" class="btn btn-sm btn-outline" data-action="record-device" onclick="startDeviceCapture()">
-                <i class="fas fa-camera"></i> Record from Device
+                <i class="fa-solid fa-camera"></i> Record from Device
             </button>
         </div>
     </div>
@@ -295,7 +294,7 @@ if ($activeTab === 'upload'):
                  style="border:2px dashed var(--border);border-radius:var(--radius-lg);padding:40px;text-align:center;margin-bottom:16px;cursor:pointer;transition:all 0.2s;"
                  onclick="document.getElementById('videoFileInput').click()">
                 <div style="font-size:40px;color:var(--primary-light);margin-bottom:12px;">
-                    <i class="fas fa-cloud-upload-alt"></i>
+                    <i class="fa-solid fa-cloud-upload-alt"></i>
                 </div>
                 <div style="font-size:15px;color:var(--text-white);font-weight:600;margin-bottom:4px;">
                     Drag &amp; drop video files here
@@ -361,7 +360,7 @@ if ($activeTab === 'upload'):
 
             <div style="margin-top:16px;">
                 <button type="submit" class="btn btn-primary" data-action="upload-video">
-                    <i class="fas fa-upload"></i> Upload
+                    <i class="fa-solid fa-upload"></i> Upload
                 </button>
             </div>
         </form>
@@ -371,15 +370,15 @@ if ($activeTab === 'upload'):
 <!-- NDI Camera Recording Panel (hidden by default) -->
 <div id="ndiRecordPanel" class="card" style="margin-bottom:24px;display:none;">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-        <h3><i class="fas fa-broadcast-tower"></i> Record from NDI Camera</h3>
+        <h3><i class="fa-solid fa-broadcast-tower"></i> Record from NDI Camera</h3>
         <button type="button" class="btn btn-sm btn-outline" onclick="closeNdiRecordPanel()">
-            <i class="fas fa-times"></i> Close
+            <i class="fa-solid fa-times"></i> Close
         </button>
     </div>
     <div class="card-body">
         <div id="ndiCameraList" style="margin-bottom:16px;">
             <div style="text-align:center;padding:20px;color:var(--text-muted);">
-                <i class="fas fa-spinner fa-spin"></i> Loading NDI cameras...
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading NDI cameras...
             </div>
         </div>
 
@@ -398,10 +397,10 @@ if ($activeTab === 'upload'):
 
             <div style="display:flex;gap:8px;margin-bottom:16px;">
                 <button id="ndiStartRecordBtn" class="btn btn-primary" onclick="ndiStartRecording()">
-                    <i class="fas fa-circle" style="color:#ef4444;"></i> Start Recording
+                    <i class="fa-solid fa-circle" style="color:#ef4444;"></i> Start Recording
                 </button>
                 <button id="ndiStopRecordBtn" class="btn btn-secondary" onclick="ndiStopRecording()" disabled>
-                    <i class="fas fa-stop"></i> Stop Recording
+                    <i class="fa-solid fa-stop"></i> Stop Recording
                 </button>
             </div>
 
@@ -453,7 +452,7 @@ if ($activeTab === 'upload'):
 
                 <div style="margin-top:16px;">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-upload"></i> Save NDI Recording
+                        <i class="fa-solid fa-upload"></i> Save NDI Recording
                     </button>
                 </div>
             </form>
@@ -464,12 +463,12 @@ if ($activeTab === 'upload'):
 <!-- Video List -->
 <div class="card">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-        <h3><i class="fas fa-film"></i> Uploaded Videos (<?= count($videos) ?>)</h3>
+        <h3><i class="fa-solid fa-film"></i> Uploaded Videos (<?= count($videos) ?>)</h3>
     </div>
     <div class="card-body" style="padding:0;">
         <?php if (empty($videos)): ?>
             <div class="empty-state-card">
-                <div class="empty-icon"><i class="fas fa-video"></i></div>
+                <div class="empty-icon"><i class="fa-solid fa-video"></i></div>
                 <p>No videos uploaded yet. Use the form above to upload your first game footage.</p>
             </div>
         <?php else: ?>
@@ -495,7 +494,7 @@ if ($activeTab === 'upload'):
                                             <?php if (!empty($video['thumbnail_path'])): ?>
                                                 <img src="<?= htmlspecialchars($video['thumbnail_path']) ?>" alt="" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
                                             <?php else: ?>
-                                                <i class="fas fa-video" style="color:var(--primary-light);font-size:14px;"></i>
+                                                <i class="fa-solid fa-video" style="color:var(--primary-light);font-size:14px;"></i>
                                             <?php endif; ?>
                                         </div>
                                         <div>
@@ -545,18 +544,18 @@ if ($activeTab === 'upload'):
                                         <?php if ($video['status'] === 'ready'): ?>
                                             <a href="?page=film_room&tab=clip_editor&source_id=<?= (int)$video['id'] ?>"
                                                class="btn btn-sm btn-primary" data-action="open-editor" title="Open in Editor">
-                                                <i class="fas fa-cut"></i>
+                                                <i class="fa-solid fa-scissors"></i>
                                             </a>
                                         <?php endif; ?>
                                         <button class="btn btn-sm btn-outline" data-action="edit-details" title="Edit Details"
                                                 onclick="openEditVideoModal(<?= (int)$video['id'] ?>, '<?= htmlspecialchars(addslashes($video['title'])) ?>')">
-                                            <i class="fas fa-edit"></i>
+                                            <i class="fa-solid fa-edit"></i>
                                         </button>
                                         <form method="POST" action="api/video_delete.php" style="display:inline;" onsubmit="return confirm('Delete this video?');">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                                             <input type="hidden" name="video_id" value="<?= (int)$video['id'] ?>">
                                             <button type="submit" class="btn btn-sm btn-outline" style="color:var(--error);border-color:var(--error);" data-action="delete" title="Delete">
-                                                <i class="fas fa-trash"></i>
+                                                <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -580,7 +579,7 @@ function handleFileSelect(input) {
         var f = input.files[i];
         var sizeMB = (f.size / 1048576).toFixed(1);
         html += '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg-secondary);border-radius:6px;margin-bottom:4px;">';
-        html += '<i class="fas fa-file-video" style="color:var(--primary-light);"></i>';
+        html += '<i class="fa-solid fa-file-video" style="color:var(--primary-light);"></i>';
         html += '<span style="font-size:13px;color:var(--text-white);">' + f.name + '</span>';
         html += '<span style="font-size:11px;color:var(--text-muted);">' + sizeMB + ' MB</span>';
         html += '</div>';
@@ -639,14 +638,14 @@ function closeNdiRecordPanel() {
 
 function loadNdiCameras() {
     var listEl = document.getElementById('ndiCameraList');
-    listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading NDI cameras...</div>';
+    listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Loading NDI cameras...</div>';
 
     fetch('api/ndi_sources.php', { credentials: 'same-origin' })
         .then(function(r) { return r.json(); })
         .then(function(data) {
             if (!data.success || !data.cameras || data.cameras.length === 0) {
                 listEl.innerHTML = '<div style="text-align:center;padding:20px;">'
-                    + '<div style="color:var(--text-muted);margin-bottom:8px;"><i class="fas fa-video-slash" style="font-size:24px;"></i></div>'
+                    + '<div style="color:var(--text-muted);margin-bottom:8px;"><i class="fa-solid fa-video-slash" style="font-size:24px;"></i></div>'
                     + '<div style="color:var(--text-secondary);font-size:14px;">No NDI cameras configured.</div>'
                     + '<div style="color:var(--text-muted);font-size:12px;margin-top:4px;">Add cameras in Arctic Wolves &rarr; System Tools &rarr; NDI Cameras</div>'
                     + '</div>';
@@ -666,7 +665,7 @@ function loadNdiCameras() {
                 body.style.cssText = 'padding:16px;display:flex;align-items:center;gap:12px;';
                 var iconWrap = document.createElement('div');
                 iconWrap.style.cssText = 'width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;';
-                iconWrap.innerHTML = '<i class="fas fa-broadcast-tower" style="color:#10b981;"></i>';
+                iconWrap.innerHTML = '<i class="fa-solid fa-broadcast-tower" style="color:#10b981;"></i>';
                 var info = document.createElement('div');
                 var nameEl = document.createElement('div');
                 nameEl.style.cssText = 'font-weight:600;font-size:14px;color:var(--text-white);';
@@ -823,7 +822,7 @@ elseif ($activeTab === 'clip_editor'):
     <div style="width:220px;flex-shrink:0;">
         <div class="card" style="position:sticky;top:80px;">
             <div class="card-header">
-                <h3 style="font-size:13px;"><i class="fas fa-film"></i> Source Video</h3>
+                <h3 style="font-size:13px;"><i class="fa-solid fa-film"></i> Source Video</h3>
             </div>
             <div class="card-body">
                 <form method="GET" action="">
@@ -868,7 +867,7 @@ elseif ($activeTab === 'clip_editor'):
     <div style="flex:1;min-width:0;">
         <?php if (!$sourceVideo): ?>
             <div class="empty-state-card">
-                <div class="empty-icon"><i class="fas fa-cut"></i></div>
+                <div class="empty-icon"><i class="fa-solid fa-scissors"></i></div>
                 <p>Select a source video from the left panel to begin clipping.</p>
                 <?php if (empty($readyVideos)): ?>
                     <p style="font-size:13px;color:var(--text-muted);margin-top:8px;">No ready videos found. Upload videos in the Upload tab first.</p>
@@ -890,19 +889,19 @@ elseif ($activeTab === 'clip_editor'):
                     <!-- Custom Controls -->
                     <div style="padding:10px 16px;background:var(--bg-secondary);border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;" data-video-controls>
                         <button class="btn btn-sm btn-secondary" data-action="play-pause" onclick="togglePlay()" title="Play/Pause">
-                            <i class="fas fa-play" id="playPauseIcon"></i>
+                            <i class="fa-solid fa-play" id="playPauseIcon"></i>
                         </button>
                         <button class="btn btn-sm btn-secondary" data-action="skip-back-5" onclick="skipTime(-5)" title="Back 5s">
-                            <i class="fas fa-backward"></i> 5s
+                            <i class="fa-solid fa-backward"></i> 5s
                         </button>
                         <button class="btn btn-sm btn-secondary" data-action="skip-forward-5" onclick="skipTime(5)" title="Forward 5s">
-                            5s <i class="fas fa-forward"></i>
+                            5s <i class="fa-solid fa-forward"></i>
                         </button>
                         <button class="btn btn-sm btn-secondary" data-action="prev-frame" onclick="skipTime(-0.033)" title="Previous Frame">
-                            <i class="fas fa-step-backward"></i>
+                            <i class="fa-solid fa-step-backward"></i>
                         </button>
                         <button class="btn btn-sm btn-secondary" data-action="next-frame" onclick="skipTime(0.033)" title="Next Frame">
-                            <i class="fas fa-step-forward"></i>
+                            <i class="fa-solid fa-step-forward"></i>
                         </button>
                         <div style="width:1px;height:20px;background:var(--border);"></div>
                         <select id="playbackSpeed" class="form-select" data-control="speed" onchange="setPlaybackSpeed(this.value)" style="width:80px;font-size:12px;">
@@ -915,7 +914,7 @@ elseif ($activeTab === 'clip_editor'):
                         <div style="flex:1;"></div>
                         <span id="currentTimeDisplay" style="font-size:12px;color:var(--text-secondary);font-family:monospace;" data-display="time">0:00 / 0:00</span>
                         <button class="btn btn-sm btn-secondary" data-action="fullscreen" onclick="toggleFullscreen()" title="Fullscreen">
-                            <i class="fas fa-expand"></i>
+                            <i class="fa-solid fa-expand"></i>
                         </button>
                     </div>
 
@@ -941,11 +940,11 @@ elseif ($activeTab === 'clip_editor'):
                         <!-- Mark In / Out Controls -->
                         <div style="display:flex;align-items:center;gap:12px;margin-top:10px;">
                             <button class="btn btn-sm btn-primary" data-action="mark-in" onclick="markIn()" title="Mark In (I)">
-                                <i class="fas fa-sign-in-alt"></i> In
+                                <i class="fa-solid fa-sign-in-alt"></i> In
                             </button>
                             <span id="markInTime" style="font-size:12px;color:var(--text-secondary);font-family:monospace;" data-display="mark-in">—</span>
                             <button class="btn btn-sm btn-primary" data-action="mark-out" onclick="markOut()" title="Mark Out (O)">
-                                Out <i class="fas fa-sign-out-alt"></i>
+                                Out <i class="fa-solid fa-sign-out-alt"></i>
                             </button>
                             <span id="markOutTime" style="font-size:12px;color:var(--text-secondary);font-family:monospace;" data-display="mark-out">—</span>
                         </div>
@@ -956,7 +955,7 @@ elseif ($activeTab === 'clip_editor'):
             <!-- Tag & Save Panel -->
             <div class="card" style="margin-bottom:16px;">
                 <div class="card-header">
-                    <h3 style="font-size:14px;"><i class="fas fa-tag"></i> Tag &amp; Save Clip</h3>
+                    <h3 style="font-size:14px;"><i class="fa-solid fa-tag"></i> Tag &amp; Save Clip</h3>
                 </div>
                 <div class="card-body">
                     <form id="saveClipForm" method="POST" action="api/clip_save.php" data-form="save-clip">
@@ -1022,10 +1021,10 @@ elseif ($activeTab === 'clip_editor'):
 
                         <div style="display:flex;gap:8px;">
                             <button type="submit" class="btn btn-primary" data-action="save-clip">
-                                <i class="fas fa-save"></i> Save Clip
+                                <i class="fa-solid fa-save"></i> Save Clip
                             </button>
                             <a href="?page=pair_device" class="btn btn-outline" data-action="start-telestration">
-                                <i class="fas fa-pencil-alt"></i> Start Telestration
+                                <i class="fa-solid fa-pen"></i> Start Telestration
                             </a>
                         </div>
                     </form>
@@ -1035,7 +1034,7 @@ elseif ($activeTab === 'clip_editor'):
             <!-- Clips List for Current Source -->
             <div class="card">
                 <div class="card-header">
-                    <h3 style="font-size:14px;"><i class="fas fa-list"></i> Clips from this Video (<?= count($sourceClips) ?>)</h3>
+                    <h3 style="font-size:14px;"><i class="fa-solid fa-list"></i> Clips from this Video (<?= count($sourceClips) ?>)</h3>
                 </div>
                 <div class="card-body" style="padding:0;">
                     <?php if (empty($sourceClips)): ?>
@@ -1068,19 +1067,19 @@ elseif ($activeTab === 'clip_editor'):
                                             </div>
                                             <?php if (!empty($clip['athlete_names'])): ?>
                                                 <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">
-                                                    <i class="fas fa-user"></i> <?= htmlspecialchars($clip['athlete_names']) ?>
+                                                    <i class="fa-solid fa-user"></i> <?= htmlspecialchars($clip['athlete_names']) ?>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
                                         <div style="display:flex;gap:4px;">
                                             <button class="btn btn-sm btn-outline" data-action="edit-clip" title="Edit" onclick="event.stopPropagation();">
-                                                <i class="fas fa-edit"></i>
+                                                <i class="fa-solid fa-edit"></i>
                                             </button>
                                             <form method="POST" action="api/clip_delete.php" style="display:inline;" onsubmit="event.stopPropagation();return confirm('Delete this clip?');">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                                                 <input type="hidden" name="clip_id" value="<?= (int)$clip['id'] ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline" style="color:var(--error);border-color:var(--error);" data-action="delete-clip" title="Delete" onclick="event.stopPropagation();">
-                                                    <i class="fas fa-trash"></i>
+                                                    <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             </form>
                                         </div>
@@ -1170,10 +1169,10 @@ if (video) {
         }
     });
     video.addEventListener('play', function() {
-        document.getElementById('playPauseIcon').className = 'fas fa-pause';
+        document.getElementById('playPauseIcon').className = 'fa-solid fa-pause';
     });
     video.addEventListener('pause', function() {
-        document.getElementById('playPauseIcon').className = 'fas fa-play';
+        document.getElementById('playPauseIcon').className = 'fa-solid fa-play';
     });
 }
 
@@ -1216,12 +1215,12 @@ elseif ($activeTab === 'multi_camera'):
 
 <?php if (!$selectedGameFilter): ?>
     <div class="empty-state-card">
-        <div class="empty-icon"><i class="fas fa-th-large"></i></div>
+        <div class="empty-icon"><i class="fa-solid fa-th-large"></i></div>
         <p>Select a game above to view multi-camera footage side by side.</p>
     </div>
 <?php elseif (empty($multiCameraVideos)): ?>
     <div class="empty-state-card">
-        <div class="empty-icon"><i class="fas fa-video-slash"></i></div>
+        <div class="empty-icon"><i class="fa-solid fa-video-slash"></i></div>
         <p>No ready videos found for this game. Upload multiple camera angles in the Upload tab.</p>
     </div>
 <?php else: ?>
@@ -1258,16 +1257,16 @@ elseif ($activeTab === 'multi_camera'):
     <div class="card">
         <div class="card-body" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
             <button class="btn btn-sm btn-primary" data-action="sync-play" onclick="syncPlayAll()">
-                <i class="fas fa-play"></i> Play All
+                <i class="fa-solid fa-play"></i> Play All
             </button>
             <button class="btn btn-sm btn-secondary" data-action="sync-pause" onclick="syncPauseAll()">
-                <i class="fas fa-pause"></i> Pause All
+                <i class="fa-solid fa-pause"></i> Pause All
             </button>
             <button class="btn btn-sm btn-secondary" data-action="sync-back" onclick="syncSkipAll(-5)">
-                <i class="fas fa-backward"></i> -5s
+                <i class="fa-solid fa-backward"></i> -5s
             </button>
             <button class="btn btn-sm btn-secondary" data-action="sync-forward" onclick="syncSkipAll(5)">
-                <i class="fas fa-forward"></i> +5s
+                <i class="fa-solid fa-forward"></i> +5s
             </button>
             <div style="flex:1;"></div>
             <span id="multiCamTime" style="font-size:12px;color:var(--text-secondary);font-family:monospace;">0:00</span>

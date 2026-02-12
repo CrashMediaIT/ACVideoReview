@@ -73,7 +73,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
 }
 
 $toolOptions = [
-    'freehand'      => ['icon' => 'fa-pencil-alt', 'label' => 'Freehand'],
+    'freehand'      => ['icon' => 'fa-pen', 'label' => 'Freehand'],
     'arrow'         => ['icon' => 'fa-long-arrow-alt-right', 'label' => 'Arrow'],
     'line'          => ['icon' => 'fa-minus', 'label' => 'Line'],
     'rectangle'     => ['icon' => 'fa-square', 'label' => 'Rectangle'],
@@ -209,19 +209,18 @@ $colorOptions = [
 
 <!-- Page Header -->
 <div class="page-header">
-    <div class="page-header-icon"><i class="fas fa-pencil-alt"></i></div>
-    <div class="page-header-info">
-        <h1 class="page-title">Telestration</h1>
+    <div class="page-header-content">
+        <h1 class="page-title"><i class="fa-solid fa-pen"></i> Telestration</h1>
         <p class="page-description"><?= htmlspecialchars($videoTitle) ?></p>
     </div>
     <div style="display:flex;gap:8px;margin-left:auto;">
         <?php if ($sessionCode): ?>
             <span class="badge badge-info" style="font-size:14px;padding:8px 16px;font-family:monospace;letter-spacing:2px;">
-                <i class="fas fa-link"></i> <?= htmlspecialchars($sessionCode) ?>
+                <i class="fa-solid fa-link"></i> <?= htmlspecialchars($sessionCode) ?>
             </span>
         <?php endif; ?>
         <span class="badge <?= $role === 'viewer' ? 'badge-primary' : 'badge-success' ?>" style="font-size:12px;padding:8px 12px;">
-            <i class="fas fa-<?= $role === 'viewer' ? 'tv' : 'gamepad' ?>"></i>
+            <i class="fa-solid fa-<?= $role === 'viewer' ? 'tv' : 'gamepad' ?>"></i>
             <?= ucfirst($role) ?>
         </span>
     </div>
@@ -241,7 +240,7 @@ $colorOptions = [
     <div class="telestrate-toolbar" id="drawingToolbar">
         <!-- Drawing toggle -->
         <button class="tool-btn" id="toggleDrawingBtn" title="Toggle Drawing Mode" data-action="toggle-drawing">
-            <i class="fas fa-pencil-alt"></i>
+            <i class="fa-solid fa-pen"></i>
         </button>
 
         <div class="toolbar-separator"></div>
@@ -250,7 +249,7 @@ $colorOptions = [
         <?php foreach ($toolOptions as $toolId => $tool): ?>
             <button class="tool-btn <?= $toolId === 'freehand' ? 'active' : '' ?>"
                     data-tool="<?= $toolId ?>" title="<?= htmlspecialchars($tool['label']) ?>">
-                <i class="fas <?= $tool['icon'] ?>"></i>
+                <i class="fa-solid <?= $tool['icon'] ?>"></i>
             </button>
         <?php endforeach; ?>
 
@@ -278,16 +277,16 @@ $colorOptions = [
 
         <!-- Actions -->
         <button class="tool-btn" id="undoBtn" title="Undo" data-action="undo">
-            <i class="fas fa-undo"></i>
+            <i class="fa-solid fa-undo"></i>
         </button>
         <button class="tool-btn" id="redoBtn" title="Redo" data-action="redo">
-            <i class="fas fa-redo"></i>
+            <i class="fa-solid fa-redo"></i>
         </button>
         <button class="tool-btn" id="clearBtn" title="Clear All" data-action="clear" style="color:var(--error);">
-            <i class="fas fa-trash"></i>
+            <i class="fa-solid fa-trash"></i>
         </button>
         <button class="tool-btn" id="saveAnnotationBtn" title="Save Annotation" data-action="save-annotation" style="color:var(--success);">
-            <i class="fas fa-save"></i>
+            <i class="fa-solid fa-save"></i>
         </button>
     </div>
     <?php endif; ?>
@@ -295,13 +294,13 @@ $colorOptions = [
     <!-- Playback Controls -->
     <div class="playback-controls">
         <button class="tool-btn" data-player-play data-action="play-pause" id="playPauseBtn">
-            <i class="fas fa-play"></i>
+            <i class="fa-solid fa-play"></i>
         </button>
         <button class="tool-btn" title="Frame Back (,)" data-action="frame-back" id="frameBackBtn">
-            <i class="fas fa-step-backward"></i>
+            <i class="fa-solid fa-step-backward"></i>
         </button>
         <button class="tool-btn" title="Frame Forward (.)" data-action="frame-forward" id="frameForwardBtn">
-            <i class="fas fa-step-forward"></i>
+            <i class="fa-solid fa-step-forward"></i>
         </button>
 
         <span class="time-display" id="currentTimeDisplay">00:00:00.000</span>
@@ -321,7 +320,7 @@ $colorOptions = [
         </select>
 
         <button class="tool-btn" title="Fullscreen (F)" data-action="fullscreen" id="fullscreenBtn">
-            <i class="fas fa-expand"></i>
+            <i class="fa-solid fa-expand"></i>
         </button>
     </div>
 </div>
@@ -329,7 +328,7 @@ $colorOptions = [
 <!-- Back to Device Pairing -->
 <div style="margin-top:16px;">
     <a href="?page=pair_device" class="btn btn-secondary btn-sm">
-        <i class="fas fa-arrow-left"></i> Back to Device Pairing
+        <i class="fa-solid fa-arrow-left"></i> Back to Device Pairing
     </a>
 </div>
 
@@ -422,9 +421,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(function(r) { return r.json(); })
                 .then(function(res) {
                     if (res.success) {
-                        saveBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        saveBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
                         setTimeout(function() {
-                            saveBtn.innerHTML = '<i class="fas fa-save"></i>';
+                            saveBtn.innerHTML = '<i class="fa-solid fa-save"></i>';
                         }, 2000);
                     }
                 })
@@ -497,12 +496,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         video.addEventListener('play', function() {
             var icon = playPauseBtn ? playPauseBtn.querySelector('i') : null;
-            if (icon) icon.className = 'fas fa-pause';
+            if (icon) icon.className = 'fa-solid fa-pause';
         });
 
         video.addEventListener('pause', function() {
             var icon = playPauseBtn ? playPauseBtn.querySelector('i') : null;
-            if (icon) icon.className = 'fas fa-play';
+            if (icon) icon.className = 'fa-solid fa-play';
         });
     }
 });

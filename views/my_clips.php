@@ -137,9 +137,8 @@ $categoryLabels = [
 
 <!-- Page Header -->
 <div class="page-header">
-    <div class="page-header-icon"><i class="fas fa-cut"></i></div>
-    <div class="page-header-info">
-        <h1 class="page-title">My Clips</h1>
+    <div class="page-header-content">
+        <h1 class="page-title"><i class="fa-solid fa-scissors"></i> My Clips</h1>
         <p class="page-description">All video clips you've been tagged in</p>
     </div>
 </div>
@@ -191,8 +190,8 @@ $categoryLabels = [
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Filter</button>
-                <a href="?page=my_clips" class="btn btn-secondary btn-sm"><i class="fas fa-times"></i> Clear</a>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-search"></i> Filter</button>
+                <a href="?page=my_clips" class="btn btn-secondary btn-sm"><i class="fa-solid fa-times"></i> Clear</a>
             </div>
         </form>
     </div>
@@ -208,7 +207,7 @@ $categoryLabels = [
 <!-- Clips Grid -->
 <?php if (empty($clips)): ?>
     <div class="empty-state-card">
-        <div class="empty-icon"><i class="fas fa-film"></i></div>
+        <div class="empty-icon"><i class="fa-solid fa-film"></i></div>
         <p>No clips found. You'll see clips here once a coach tags you in game footage.</p>
         <?php if ($filterTag || $filterGame || $filterDateFrom || $filterDateTo || $filterSearch): ?>
             <a href="?page=my_clips" class="btn btn-secondary" style="margin-top:12px;">Clear Filters</a>
@@ -225,7 +224,7 @@ $categoryLabels = [
                         <img src="<?= htmlspecialchars($clip['thumbnail_path']) ?>" alt="Clip thumbnail" loading="lazy">
                     <?php else: ?>
                         <div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-secondary);">
-                            <i class="fas fa-play-circle" style="font-size:36px;color:var(--primary-light);"></i>
+                            <i class="fa-solid fa-play-circle" style="font-size:36px;color:var(--primary-light);"></i>
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($clip['duration'])): ?>
@@ -256,7 +255,7 @@ $categoryLabels = [
                             <span class="badge badge-primary" style="font-size:10px;"><?= htmlspecialchars($clip['role_in_clip']) ?></span>
                         <?php endif; ?>
                         <?php if (!empty($clip['camera_angle'])): ?>
-                            <span><i class="fas fa-video" style="margin-right:2px;"></i><?= htmlspecialchars($clip['camera_angle']) ?></span>
+                            <span><i class="fa-solid fa-video" style="margin-right:2px;"></i><?= htmlspecialchars($clip['camera_angle']) ?></span>
                         <?php endif; ?>
                         <?php if (!empty($clip['opponent_name'])): ?>
                             <span>vs <?= htmlspecialchars($clip['opponent_name']) ?></span>
@@ -278,7 +277,7 @@ $categoryLabels = [
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);">
             <h3 id="myClipsPlayerTitle" style="font-size:15px;font-weight:600;color:var(--text-white);margin:0;">Clip</h3>
             <button class="btn btn-sm btn-secondary" id="closeMyClipsPlayer" data-action="close-video">
-                <i class="fas fa-times"></i>
+                <i class="fa-solid fa-times"></i>
             </button>
         </div>
         <div class="video-player-container" style="background:#000;">

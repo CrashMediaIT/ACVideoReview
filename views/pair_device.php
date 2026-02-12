@@ -41,9 +41,8 @@ $statusColors = [
 
 <!-- Page Header -->
 <div class="page-header">
-    <div class="page-header-icon"><i class="fas fa-link"></i></div>
-    <div class="page-header-info">
-        <h1 class="page-title">Pair Device</h1>
+    <div class="page-header-content">
+        <h1 class="page-title"><i class="fa-solid fa-link"></i> Pair Device</h1>
         <p class="page-description">Connect a viewer display with a controller for live telestration</p>
     </div>
 </div>
@@ -51,27 +50,27 @@ $statusColors = [
 <!-- How It Works -->
 <div class="card" style="margin-bottom:24px;">
     <div class="card-header">
-        <h3><i class="fas fa-info-circle"></i> How It Works</h3>
+        <h3><i class="fa-solid fa-info-circle"></i> How It Works</h3>
     </div>
     <div class="card-body">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;text-align:center;">
             <div>
                 <div style="font-size:36px;color:var(--primary-light);margin-bottom:12px;">
-                    <i class="fas fa-tv"></i>
+                    <i class="fa-solid fa-tv"></i>
                 </div>
                 <div style="font-weight:600;color:var(--text-white);margin-bottom:4px;">1. Start Viewer</div>
                 <div style="font-size:13px;color:var(--text-secondary);">Open this page on the display device (TV, projector, or large screen)</div>
             </div>
             <div>
                 <div style="font-size:36px;color:var(--warning);margin-bottom:12px;">
-                    <i class="fas fa-mobile-alt"></i>
+                    <i class="fa-solid fa-mobile-alt"></i>
                 </div>
                 <div style="font-weight:600;color:var(--text-white);margin-bottom:4px;">2. Enter Code</div>
                 <div style="font-size:13px;color:var(--text-secondary);">Enter the pairing code on your controller device (tablet or phone)</div>
             </div>
             <div>
                 <div style="font-size:36px;color:var(--success);margin-bottom:12px;">
-                    <i class="fas fa-pencil-alt"></i>
+                    <i class="fa-solid fa-pen"></i>
                 </div>
                 <div style="font-weight:600;color:var(--text-white);margin-bottom:4px;">3. Draw Live</div>
                 <div style="font-size:13px;color:var(--text-secondary);">Control playback and draw annotations from your controller</div>
@@ -85,7 +84,7 @@ $statusColors = [
     <!-- Viewer Mode -->
     <div class="card">
         <div class="card-header">
-            <h3><i class="fas fa-tv"></i> Start as Viewer</h3>
+            <h3><i class="fa-solid fa-tv"></i> Start as Viewer</h3>
         </div>
         <div class="card-body" style="text-align:center;padding:32px 20px;">
             <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;">
@@ -97,11 +96,11 @@ $statusColors = [
                     ------
                 </div>
                 <div id="viewerStatusText" style="font-size:13px;color:var(--warning);margin-top:12px;">
-                    <i class="fas fa-spinner fa-spin"></i> Waiting for controller...
+                    <i class="fa-solid fa-spinner fa-spin"></i> Waiting for controller...
                 </div>
             </div>
             <button class="btn btn-primary" id="startViewerBtn" data-action="start-viewer">
-                <i class="fas fa-tv"></i> Start Viewer
+                <i class="fa-solid fa-tv"></i> Start Viewer
             </button>
         </div>
     </div>
@@ -109,7 +108,7 @@ $statusColors = [
     <!-- Controller Mode -->
     <div class="card">
         <div class="card-header">
-            <h3><i class="fas fa-gamepad"></i> Join as Controller</h3>
+            <h3><i class="fa-solid fa-gamepad"></i> Join as Controller</h3>
         </div>
         <div class="card-body" style="text-align:center;padding:32px 20px;">
             <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;">
@@ -123,7 +122,7 @@ $statusColors = [
             </div>
             <div id="controllerStatusText" style="display:none;font-size:13px;margin-bottom:12px;"></div>
             <button class="btn btn-primary" id="joinControllerBtn" data-action="join-controller">
-                <i class="fas fa-link"></i> Connect
+                <i class="fa-solid fa-link"></i> Connect
             </button>
         </div>
     </div>
@@ -133,7 +132,7 @@ $statusColors = [
 <?php if (!empty($existingSessions)): ?>
 <div class="card">
     <div class="card-header">
-        <h3><i class="fas fa-broadcast-tower"></i> Active Sessions</h3>
+        <h3><i class="fa-solid fa-broadcast-tower"></i> Active Sessions</h3>
     </div>
     <div class="card-body" style="padding:0;">
         <?php foreach ($existingSessions as $session): ?>
@@ -157,11 +156,11 @@ $statusColors = [
                 <div style="display:flex;gap:8px;align-items:center;">
                     <a href="?page=telestrate&session=<?= (int)$session['id'] ?>&role=viewer"
                        class="btn btn-sm btn-primary" data-action="resume-viewer">
-                        <i class="fas fa-tv"></i> Viewer
+                        <i class="fa-solid fa-tv"></i> Viewer
                     </a>
                     <a href="?page=telestrate&session=<?= (int)$session['id'] ?>&role=controller"
                        class="btn btn-sm btn-outline" data-action="resume-controller">
-                        <i class="fas fa-gamepad"></i> Controller
+                        <i class="fa-solid fa-gamepad"></i> Controller
                     </a>
                 </div>
             </div>
@@ -179,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (startViewerBtn) {
         startViewerBtn.addEventListener('click', function() {
             this.disabled = true;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Starting...';
+            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Starting...';
 
             if (typeof DeviceSync !== 'undefined') {
                 var sync = new DeviceSync({
@@ -191,19 +190,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         var statusEl = document.getElementById('viewerStatusText');
 
                         if (status === 'paired' || status === 'active') {
-                            statusEl.innerHTML = '<i class="fas fa-check-circle" style="color:var(--success);"></i> Controller connected!';
+                            statusEl.innerHTML = '<i class="fa-solid fa-check-circle" style="color:var(--success);"></i> Controller connected!';
                             statusEl.style.color = 'var(--success)';
                             setTimeout(function() {
                                 window.location.href = '?page=telestrate&role=viewer';
                             }, 1000);
                         } else if (status === 'waiting') {
-                            statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Waiting for controller...';
+                            statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Waiting for controller...';
                             statusEl.style.color = 'var(--warning)';
                         }
                     },
                     onError: function(err) {
                         startViewerBtn.disabled = false;
-                        startViewerBtn.innerHTML = '<i class="fas fa-tv"></i> Start Viewer';
+                        startViewerBtn.innerHTML = '<i class="fa-solid fa-tv"></i> Start Viewer';
                         alert('Error: ' + err);
                     }
                 });
@@ -226,10 +225,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             this.disabled = true;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting...';
             var statusEl = document.getElementById('controllerStatusText');
             statusEl.style.display = 'block';
-            statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+            statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting...';
             statusEl.style.color = 'var(--info)';
 
             if (typeof DeviceSync !== 'undefined') {
@@ -239,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     csrfToken: csrfToken,
                     onStatusChange: function(status) {
                         if (status === 'paired' || status === 'active') {
-                            statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Connected!';
+                            statusEl.innerHTML = '<i class="fa-solid fa-check-circle"></i> Connected!';
                             statusEl.style.color = 'var(--success)';
                             setTimeout(function() {
                                 window.location.href = '?page=telestrate&role=controller';
@@ -248,8 +247,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     onError: function(err) {
                         joinBtn.disabled = false;
-                        joinBtn.innerHTML = '<i class="fas fa-link"></i> Connect';
-                        statusEl.innerHTML = '<i class="fas fa-times-circle"></i> ' + err;
+                        joinBtn.innerHTML = '<i class="fa-solid fa-link"></i> Connect';
+                        statusEl.innerHTML = '<i class="fa-solid fa-times-circle"></i> ' + err;
                         statusEl.style.color = 'var(--error)';
                     }
                 });

@@ -57,9 +57,8 @@ $categoryLabels = [
 
 <!-- Page Header -->
 <div class="page-header">
-    <div class="page-header-icon"><i class="fas fa-film"></i></div>
-    <div class="page-header-info">
-        <h1 class="page-title">Video Review</h1>
+    <div class="page-header-content">
+        <h1 class="page-title"><i class="fa-solid fa-film"></i> Video Review</h1>
         <p class="page-description">Review tagged game footage and clips</p>
     </div>
 </div>
@@ -69,15 +68,15 @@ $categoryLabels = [
     <div class="page-tabs">
         <a href="?page=video_review&tab=clips"
            class="page-tab <?= $activeTab === 'clips' ? 'active' : '' ?>">
-            <i class="fas fa-film"></i> <?= $isCoach ? 'All Clips' : 'My Clips' ?>
+            <i class="fa-solid fa-film"></i> <?= $isCoach ? 'All Clips' : 'My Clips' ?>
         </a>
         <a href="?page=video_review&tab=by_game"
            class="page-tab <?= $activeTab === 'by_game' ? 'active' : '' ?>">
-            <i class="fas fa-hockey-puck"></i> By Game
+            <i class="fa-solid fa-hockey-puck"></i> By Game
         </a>
         <a href="?page=video_review&tab=opponents"
            class="page-tab <?= $activeTab === 'opponents' ? 'active' : '' ?>">
-            <i class="fas fa-binoculars"></i> Opponent Scouting
+            <i class="fa-solid fa-binoculars"></i> Opponent Scouting
         </a>
     </div>
 </div>
@@ -217,8 +216,8 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Filter</button>
-                <a href="?page=video_review&tab=clips" class="btn btn-secondary btn-sm"><i class="fas fa-times"></i> Clear</a>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-search"></i> Filter</button>
+                <a href="?page=video_review&tab=clips" class="btn btn-secondary btn-sm"><i class="fa-solid fa-times"></i> Clear</a>
             </div>
         </form>
     </div>
@@ -232,11 +231,11 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
     <div style="display:flex;gap:8px;">
         <a href="?page=video_review&tab=clips&view=grid<?= $filterCategory ? '&category=' . urlencode($filterCategory) : '' ?><?= $filterTag ? '&tag=' . $filterTag : '' ?>"
            class="btn btn-sm <?= $viewMode === 'grid' ? 'btn-primary' : 'btn-secondary' ?>" data-view="grid">
-            <i class="fas fa-th"></i>
+            <i class="fa-solid fa-th"></i>
         </a>
         <a href="?page=video_review&tab=clips&view=list<?= $filterCategory ? '&category=' . urlencode($filterCategory) : '' ?><?= $filterTag ? '&tag=' . $filterTag : '' ?>"
            class="btn btn-sm <?= $viewMode === 'list' ? 'btn-primary' : 'btn-secondary' ?>" data-view="list">
-            <i class="fas fa-list"></i>
+            <i class="fa-solid fa-list"></i>
         </a>
     </div>
 </div>
@@ -244,7 +243,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
 <!-- Clips Display -->
 <?php if (empty($clips)): ?>
     <div class="empty-state-card">
-        <div class="empty-icon"><i class="fas fa-film"></i></div>
+        <div class="empty-icon"><i class="fa-solid fa-film"></i></div>
         <p><?= $isCoach ? 'No clips found. Head to the Film Room to create clips from game footage.' : 'No clips found. Check back after your coach tags you in game footage.' ?></p>
         <?php if ($isCoach): ?>
             <a href="?page=film_room" class="btn btn-primary" style="margin-top:12px;">Go to Film Room</a>
@@ -261,7 +260,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                             <img src="<?= htmlspecialchars($clip['thumbnail_path']) ?>" alt="" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
                         <?php else: ?>
                             <div style="display:flex;align-items:center;justify-content:center;height:100%;">
-                                <i class="fas fa-play" style="color:var(--primary-light);"></i>
+                                <i class="fa-solid fa-play" style="color:var(--primary-light);"></i>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -271,10 +270,10 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                         </div>
                         <div style="font-size:12px;color:var(--text-muted);margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                             <?php if (!empty($clip['duration'])): ?>
-                                <span><i class="fas fa-clock"></i> <?= formatDuration((int)$clip['duration']) ?></span>
+                                <span><i class="fa-solid fa-clock"></i> <?= formatDuration((int)$clip['duration']) ?></span>
                             <?php endif; ?>
                             <?php if (!empty($clip['camera_angle'])): ?>
-                                <span><i class="fas fa-video"></i> <?= htmlspecialchars($clip['camera_angle']) ?></span>
+                                <span><i class="fa-solid fa-video"></i> <?= htmlspecialchars($clip['camera_angle']) ?></span>
                             <?php endif; ?>
                             <span><?= timeAgo($clip['created_at']) ?></span>
                             <?php if (!empty($clip['tag_names'])): ?>
@@ -306,7 +305,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
     <?php foreach ($groupedClips as $catKey => $catClips): ?>
         <div style="margin-bottom:24px;">
             <h3 style="font-size:16px;font-weight:600;color:var(--text-white);margin-bottom:12px;">
-                <i class="fas fa-tag" style="color:var(--primary-light);margin-right:6px;"></i>
+                <i class="fa-solid fa-tag" style="color:var(--primary-light);margin-right:6px;"></i>
                 <?= htmlspecialchars($categoryLabels[$catKey] ?? ucfirst($catKey)) ?>
                 <span style="font-size:13px;color:var(--text-muted);font-weight:400;">(<?= count($catClips) ?>)</span>
             </h3>
@@ -318,7 +317,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                                 <img src="<?= htmlspecialchars($clip['thumbnail_path']) ?>" alt="Clip thumbnail" loading="lazy">
                             <?php else: ?>
                                 <div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-secondary);">
-                                    <i class="fas fa-play-circle" style="font-size:32px;color:var(--primary-light);"></i>
+                                    <i class="fa-solid fa-play-circle" style="font-size:32px;color:var(--primary-light);"></i>
                                 </div>
                             <?php endif; ?>
                             <?php if (!empty($clip['duration'])): ?>
@@ -450,11 +449,11 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
     <div style="display:flex;gap:8px;">
         <a href="?page=video_review&tab=by_game&by_game_view=list"
            class="btn btn-sm <?= $byGameView === 'list' ? 'btn-primary' : 'btn-secondary' ?>">
-            <i class="fas fa-list"></i> List
+            <i class="fa-solid fa-list"></i> List
         </a>
         <a href="?page=video_review&tab=by_game&by_game_view=calendar"
            class="btn btn-sm <?= $byGameView === 'calendar' ? 'btn-primary' : 'btn-secondary' ?>">
-            <i class="fas fa-calendar"></i> Calendar
+            <i class="fa-solid fa-calendar"></i> Calendar
         </a>
     </div>
 </div>
@@ -492,11 +491,11 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
     <div class="card">
         <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
             <a href="?page=video_review&tab=by_game&by_game_view=calendar&month=<?= $prevMonth ?>&year=<?= $prevYear ?>" class="btn btn-sm btn-secondary">
-                <i class="fas fa-chevron-left"></i>
+                <i class="fa-solid fa-chevron-left"></i>
             </a>
             <h3><?= $monthName ?></h3>
             <a href="?page=video_review&tab=by_game&by_game_view=calendar&month=<?= $nextMonth ?>&year=<?= $nextYear ?>" class="btn btn-sm btn-secondary">
-                <i class="fas fa-chevron-right"></i>
+                <i class="fa-solid fa-chevron-right"></i>
             </a>
         </div>
         <div class="card-body">
@@ -542,7 +541,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
     <!-- List View -->
     <?php if (empty($games)): ?>
         <div class="empty-state-card">
-            <div class="empty-icon"><i class="fas fa-hockey-puck"></i></div>
+            <div class="empty-icon"><i class="fa-solid fa-hockey-puck"></i></div>
             <p>No games found.</p>
         </div>
     <?php else: ?>
@@ -572,19 +571,19 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                                     <span>Score: <?= (int)$game['home_score'] ?> - <?= (int)$game['away_score'] ?></span> &middot;
                                 <?php endif; ?>
                                 <?php if (!empty($game['location'])): ?>
-                                    <span><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($game['location']) ?></span> &middot;
+                                    <span><i class="fa-solid fa-location-dot"></i> <?= htmlspecialchars($game['location']) ?></span> &middot;
                                 <?php endif; ?>
                                 <span><?= (int)$game['clip_count'] ?> clip<?= (int)$game['clip_count'] !== 1 ? 's' : '' ?></span>
                             </div>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-<?= $isSelected ? 'up' : 'down' ?>" style="color:var(--text-muted);"></i>
+                    <i class="fa-solid fa-chevron-<?= $isSelected ? 'up' : 'down' ?>" style="color:var(--text-muted);"></i>
                 </a>
                 <?php if ($isSelected): ?>
                     <div class="card-body">
                         <?php if (empty($gameClips)): ?>
                             <div class="empty-state-card">
-                                <div class="empty-icon"><i class="fas fa-film"></i></div>
+                                <div class="empty-icon"><i class="fa-solid fa-film"></i></div>
                                 <p>No clips for this game yet.</p>
                             </div>
                         <?php else: ?>
@@ -596,7 +595,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                                                 <img src="<?= htmlspecialchars($gc['thumbnail_path']) ?>" alt="" loading="lazy">
                                             <?php else: ?>
                                                 <div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-main);">
-                                                    <i class="fas fa-play-circle" style="font-size:24px;color:var(--primary-light);"></i>
+                                                    <i class="fa-solid fa-play-circle" style="font-size:24px;color:var(--primary-light);"></i>
                                                 </div>
                                             <?php endif; ?>
                                             <?php if (!empty($gc['duration'])): ?>
@@ -740,7 +739,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
             <?php endif; ?>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Scout</button>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-search"></i> Scout</button>
             </div>
         </form>
     </div>
@@ -748,12 +747,12 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
 
 <?php if (!$selectedOpponent): ?>
     <div class="empty-state-card">
-        <div class="empty-icon"><i class="fas fa-binoculars"></i></div>
+        <div class="empty-icon"><i class="fa-solid fa-binoculars"></i></div>
         <p>Select an opponent team above to view their game footage and scouting clips.</p>
     </div>
 <?php elseif (empty($opponentClips)): ?>
     <div class="empty-state-card">
-        <div class="empty-icon"><i class="fas fa-video-slash"></i></div>
+        <div class="empty-icon"><i class="fa-solid fa-video-slash"></i></div>
         <p>No clips found for this opponent. Clips will appear here once game footage is tagged.</p>
     </div>
 <?php else: ?>
@@ -770,7 +769,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
         <div class="card" style="margin-bottom:16px;">
             <div class="card-header">
                 <h3 style="font-size:15px;">
-                    <i class="fas fa-hockey-puck" style="color:var(--primary-light);margin-right:6px;"></i>
+                    <i class="fa-solid fa-hockey-puck" style="color:var(--primary-light);margin-right:6px;"></i>
                     <?= htmlspecialchars($firstClip['home_team'] ?? 'Team') ?> vs Opponent
                     <?php if (!empty($firstClip['game_date'])): ?>
                         &mdash; <?= date('M j, Y', strtotime($firstClip['game_date'])) ?>
@@ -791,7 +790,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                                     <img src="<?= htmlspecialchars($oc['thumbnail_path']) ?>" alt="" loading="lazy">
                                 <?php else: ?>
                                     <div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-main);">
-                                        <i class="fas fa-play-circle" style="font-size:24px;color:var(--primary-light);"></i>
+                                        <i class="fa-solid fa-play-circle" style="font-size:24px;color:var(--primary-light);"></i>
                                     </div>
                                 <?php endif; ?>
                                 <?php if (!empty($oc['duration'])): ?>
@@ -829,7 +828,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);">
             <h3 id="videoPlayerTitle" style="font-size:15px;font-weight:600;color:var(--text-white);margin:0;">Clip</h3>
             <button class="btn btn-sm btn-secondary" id="closeVideoPlayer" data-action="close-video">
-                <i class="fas fa-times"></i>
+                <i class="fa-solid fa-times"></i>
             </button>
         </div>
         <div class="video-player-container" style="background:#000;">
