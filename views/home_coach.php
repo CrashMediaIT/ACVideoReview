@@ -151,14 +151,14 @@ if (!function_exists('timeAgo')) {
 if (!function_exists('notificationIcon')) {
     function notificationIcon($type) {
         $icons = [
-            'new_video'            => 'fas fa-video',
-            'clip_tagged'          => 'fas fa-tag',
-            'game_plan_published'  => 'fas fa-chess',
-            'review_session'       => 'fas fa-users',
-            'video_ready'          => 'fas fa-check-circle',
-            'calendar_update'      => 'fas fa-calendar',
+            'new_video'            => 'fa-solid fa-video',
+            'clip_tagged'          => 'fa-solid fa-tag',
+            'game_plan_published'  => 'fa-solid fa-chess',
+            'review_session'       => 'fa-solid fa-users',
+            'video_ready'          => 'fa-solid fa-circle-check',
+            'calendar_update'      => 'fa-solid fa-calendar',
         ];
-        return $icons[$type] ?? 'fas fa-bell';
+        return $icons[$type] ?? 'fa-solid fa-bell';
     }
 }
 
@@ -184,9 +184,8 @@ $videoStatusBadge = [
 
 <!-- Page Header -->
 <div class="page-header">
-    <div class="page-header-icon"><i class="fas fa-home"></i></div>
-    <div class="page-header-info">
-        <h1 class="page-title">Dashboard</h1>
+    <div class="page-header-content">
+        <h1 class="page-title"><i class="fa-solid fa-house"></i> Dashboard</h1>
         <p class="page-description">Welcome back, Coach <?= htmlspecialchars($user_name) ?>! Here's your team overview.</p>
     </div>
 </div>
@@ -194,22 +193,22 @@ $videoStatusBadge = [
 <!-- Stat Cards Row -->
 <div class="stat-cards-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
     <div class="stat-card">
-        <div class="stat-icon" style="color:var(--warning);"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="stat-icon" style="color:var(--warning);"><i class="fa-solid fa-triangle-exclamation"></i></div>
         <div class="stat-number"><?= $statVideosNeedProcessing ?></div>
         <div class="stat-label">Videos Need Processing</div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="color:var(--success);"><i class="fas fa-cut"></i></div>
+        <div class="stat-icon" style="color:var(--success);"><i class="fa-solid fa-scissors"></i></div>
         <div class="stat-number"><?= $statTotalClips ?></div>
         <div class="stat-label">Clips (6 Months)</div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="color:var(--info);"><i class="fas fa-calendar-alt"></i></div>
+        <div class="stat-icon" style="color:var(--info);"><i class="fa-solid fa-calendar"></i></div>
         <div class="stat-number"><?= $statUpcomingGames ?></div>
         <div class="stat-label">Upcoming Games</div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="color:var(--primary-light);"><i class="fas fa-chess"></i></div>
+        <div class="stat-icon" style="color:var(--primary-light);"><i class="fa-solid fa-chess"></i></div>
         <div class="stat-number"><?= $statActiveGamePlans ?></div>
         <div class="stat-label">Active Game Plans</div>
     </div>
@@ -219,7 +218,7 @@ $videoStatusBadge = [
 <?php if (!empty($videosNeedProcessing)): ?>
 <div class="card" style="margin-bottom:24px;border-left:3px solid var(--warning);">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-        <h3><i class="fas fa-exclamation-triangle" style="color:var(--warning);"></i> Videos Needing Processing</h3>
+        <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--warning);"></i> Videos Needing Processing</h3>
         <a href="?page=film_room" class="btn btn-sm btn-primary">Go to Film Room</a>
     </div>
     <div class="card-body">
@@ -227,7 +226,7 @@ $videoStatusBadge = [
             <div class="session-list-card" data-video-id="<?= (int)$video['id'] ?>">
                 <div class="session-date-column">
                     <div style="font-size:20px;font-weight:700;color:var(--warning);">
-                        <i class="fas fa-video"></i>
+                        <i class="fa-solid fa-video"></i>
                     </div>
                 </div>
                 <div class="session-details-column" style="flex:1;">
@@ -256,27 +255,27 @@ $videoStatusBadge = [
 <!-- Quick Actions -->
 <div class="card" style="margin-bottom:24px;">
     <div class="card-header">
-        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+        <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
     </div>
     <div class="card-body">
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;">
             <a href="?page=film_room" class="card" style="text-decoration:none;text-align:center;padding:20px;transition:all 0.2s;cursor:pointer;" data-action="upload_video">
-                <div style="font-size:28px;color:var(--primary-light);margin-bottom:8px;"><i class="fas fa-upload"></i></div>
+                <div style="font-size:28px;color:var(--primary-light);margin-bottom:8px;"><i class="fa-solid fa-upload"></i></div>
                 <div style="font-weight:600;color:var(--text-white);font-size:14px;">Upload Video</div>
                 <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Add new game footage</div>
             </a>
             <a href="?page=game_plan" class="card" style="text-decoration:none;text-align:center;padding:20px;transition:all 0.2s;cursor:pointer;" data-action="create_game_plan">
-                <div style="font-size:28px;color:var(--success);margin-bottom:8px;"><i class="fas fa-chess"></i></div>
+                <div style="font-size:28px;color:var(--success);margin-bottom:8px;"><i class="fa-solid fa-chess"></i></div>
                 <div style="font-weight:600;color:var(--text-white);font-size:14px;">Create Game Plan</div>
                 <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Set up lines & strategy</div>
             </a>
             <a href="?page=pair_device" class="card" style="text-decoration:none;text-align:center;padding:20px;transition:all 0.2s;cursor:pointer;" data-action="start_telestration">
-                <div style="font-size:28px;color:var(--warning);margin-bottom:8px;"><i class="fas fa-pencil-alt"></i></div>
+                <div style="font-size:28px;color:var(--warning);margin-bottom:8px;"><i class="fa-solid fa-pen"></i></div>
                 <div style="font-weight:600;color:var(--text-white);font-size:14px;">Start Telestration</div>
                 <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Draw on video live</div>
             </a>
             <a href="?page=calendar" class="card" style="text-decoration:none;text-align:center;padding:20px;transition:all 0.2s;cursor:pointer;" data-action="view_calendar">
-                <div style="font-size:28px;color:var(--info);margin-bottom:8px;"><i class="fas fa-calendar-alt"></i></div>
+                <div style="font-size:28px;color:var(--info);margin-bottom:8px;"><i class="fa-solid fa-calendar"></i></div>
                 <div style="font-weight:600;color:var(--text-white);font-size:14px;">View Calendar</div>
                 <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Game schedule & events</div>
             </a>
@@ -287,13 +286,13 @@ $videoStatusBadge = [
 <!-- Recent Game Plan Activity -->
 <div class="card" style="margin-bottom:24px;">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-        <h3><i class="fas fa-chess"></i> Recent Game Plan Activity</h3>
+        <h3><i class="fa-solid fa-chess"></i> Recent Game Plan Activity</h3>
         <a href="?page=game_plan" class="btn btn-sm btn-outline">View All</a>
     </div>
     <div class="card-body">
         <?php if (empty($recentGamePlanActivity)): ?>
             <div class="empty-state-card">
-                <div class="empty-icon"><i class="fas fa-chess"></i></div>
+                <div class="empty-icon"><i class="fa-solid fa-chess"></i></div>
                 <p>No game plans yet. Create your first game plan to get started.</p>
             </div>
         <?php else: ?>
@@ -301,7 +300,7 @@ $videoStatusBadge = [
                 <div class="session-list-card" data-plan-id="<?= (int)$plan['id'] ?>">
                     <div class="session-date-column">
                         <div style="font-size:20px;color:var(--primary-light);">
-                            <i class="fas fa-clipboard-list"></i>
+                            <i class="fa-solid fa-clipboard-list"></i>
                         </div>
                     </div>
                     <div class="session-details-column" style="flex:1;">
@@ -335,13 +334,13 @@ $videoStatusBadge = [
 <!-- Recent Videos Uploaded -->
 <div class="card" style="margin-bottom:24px;">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-        <h3><i class="fas fa-video"></i> Recent Videos Uploaded</h3>
+        <h3><i class="fa-solid fa-video"></i> Recent Videos Uploaded</h3>
         <a href="?page=film_room" class="btn btn-sm btn-outline">Film Room</a>
     </div>
     <div class="card-body">
         <?php if (empty($recentVideos)): ?>
             <div class="empty-state-card">
-                <div class="empty-icon"><i class="fas fa-video-slash"></i></div>
+                <div class="empty-icon"><i class="fa-solid fa-video-slash"></i></div>
                 <p>No videos uploaded yet. Head to the Film Room to upload game footage.</p>
             </div>
         <?php else: ?>
@@ -353,7 +352,7 @@ $videoStatusBadge = [
                                 <img src="<?= htmlspecialchars($video['thumbnail_path']) ?>" alt="Video thumbnail" loading="lazy">
                             <?php else: ?>
                                 <div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-secondary);">
-                                    <i class="fas fa-video" style="font-size:32px;color:var(--primary-light);"></i>
+                                    <i class="fa-solid fa-video" style="font-size:32px;color:var(--primary-light);"></i>
                                 </div>
                             <?php endif; ?>
                             <?php if (!empty($video['duration_seconds'])): ?>
@@ -384,12 +383,12 @@ $videoStatusBadge = [
 <!-- Notifications -->
 <div class="card">
     <div class="card-header">
-        <h3><i class="fas fa-bell"></i> Notifications</h3>
+        <h3><i class="fa-solid fa-bell"></i> Notifications</h3>
     </div>
     <div class="card-body">
         <?php if (empty($notifications)): ?>
             <div class="empty-state-card">
-                <div class="empty-icon"><i class="fas fa-bell-slash"></i></div>
+                <div class="empty-icon"><i class="fa-solid fa-bell-slash"></i></div>
                 <p>No notifications right now. You're all caught up!</p>
             </div>
         <?php else: ?>

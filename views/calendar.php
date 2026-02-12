@@ -163,152 +163,140 @@ $sourceTypeLabels = [
 
 <!-- Page Header -->
 <div class="page-header">
-    <div class="page-header-icon"><i class="fas fa-calendar-alt"></i></div>
-    <div class="page-header-info">
-        <h1 class="page-title">Schedule</h1>
+    <div class="page-header-content">
+        <h1 class="page-title"><i class="fa-solid fa-calendar"></i> Schedule</h1>
         <p class="page-description">Manage your team's game schedule and calendar imports</p>
     </div>
 </div>
 
-<!-- Action Bar -->
-<div class="card" style="margin-bottom:16px;">
-    <div class="card-body" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;">
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <!-- View Toggle -->
-            <a href="?page=calendar&view=calendar&team_filter=<?= $filterTeam ?>&month=<?= $calMonth ?>&year=<?= $calYear ?>"
-               class="btn btn-sm <?= $calView === 'calendar' ? 'btn-primary' : 'btn-secondary' ?>" data-view="calendar">
-                <i class="fas fa-calendar"></i> Calendar
-            </a>
-            <a href="?page=calendar&view=list&team_filter=<?= $filterTeam ?>"
-               class="btn btn-sm <?= $calView === 'list' ? 'btn-primary' : 'btn-secondary' ?>" data-view="list">
-                <i class="fas fa-list"></i> List
-            </a>
+<!-- Filter Box -->
+<div class="filter-box">
+    <div class="filter-box-header"><i class="fa-solid fa-filter"></i> Filter Schedule</div>
+    <div class="filter-box-content">
+        <div class="filter-row" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;">
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                <!-- Team Filter -->
+                <div class="filter-field">
+                    <form method="GET" action="" style="display:inline-flex;align-items:center;gap:8px;">
+                        <input type="hidden" name="page" value="calendar">
+                        <input type="hidden" name="view" value="<?= htmlspecialchars($calView) ?>">
+                        <input type="hidden" name="month" value="<?= $calMonth ?>">
+                        <input type="hidden" name="year" value="<?= $calYear ?>">
+                        <select name="team_filter" class="form-select" data-filter="team" onchange="this.form.submit()" style="min-width:150px;">
+                            <option value="0">All Teams</option>
+                            <?php foreach ($teams as $team): ?>
+                                <option value="<?= (int)$team['id'] ?>" <?= $filterTeam === (int)$team['id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($team['team_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </form>
+                </div>
 
-            <!-- Team Filter -->
-            <form method="GET" action="" style="display:inline-flex;align-items:center;gap:8px;">
-                <input type="hidden" name="page" value="calendar">
-                <input type="hidden" name="view" value="<?= htmlspecialchars($calView) ?>">
-                <input type="hidden" name="month" value="<?= $calMonth ?>">
-                <input type="hidden" name="year" value="<?= $calYear ?>">
-                <select name="team_filter" class="form-select" data-filter="team" onchange="this.form.submit()" style="min-width:150px;">
-                    <option value="0">All Teams</option>
-                    <?php foreach ($teams as $team): ?>
-                        <option value="<?= (int)$team['id'] ?>" <?= $filterTeam === (int)$team['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($team['team_name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </form>
+                <?php if ($calView === 'list'): ?>
+                <div class="filter-field">
+                    <form method="GET" action="" style="display:inline-flex;align-items:center;gap:8px;">
+                        <input type="hidden" name="page" value="calendar">
+                        <input type="hidden" name="view" value="list">
+                        <input type="hidden" name="team_filter" value="<?= $filterTeam ?>">
+                        <select name="time_filter" class="form-select" data-filter="time" onchange="this.form.submit()" style="min-width:130px;">
+                            <option value="">All Games</option>
+                            <option value="upcoming" <?= $filterTime === 'upcoming' ? 'selected' : '' ?>>Upcoming</option>
+                            <option value="past" <?= $filterTime === 'past' ? 'selected' : '' ?>>Past</option>
+                        </select>
+                    </form>
+                </div>
+                <?php endif; ?>
+            </div>
 
-            <?php if ($calView === 'list'): ?>
-                <form method="GET" action="" style="display:inline-flex;align-items:center;gap:8px;">
-                    <input type="hidden" name="page" value="calendar">
-                    <input type="hidden" name="view" value="list">
-                    <input type="hidden" name="team_filter" value="<?= $filterTeam ?>">
-                    <select name="time_filter" class="form-select" data-filter="time" onchange="this.form.submit()" style="min-width:130px;">
-                        <option value="">All Games</option>
-                        <option value="upcoming" <?= $filterTime === 'upcoming' ? 'selected' : '' ?>>Upcoming</option>
-                        <option value="past" <?= $filterTime === 'past' ? 'selected' : '' ?>>Past</option>
-                    </select>
-                </form>
-            <?php endif; ?>
+            <div style="display:flex;gap:12px;align-items:center;">
+                <!-- View Toggle -->
+                <div class="view-toggle">
+                    <a href="?page=calendar&view=list&team_filter=<?= $filterTeam ?>"
+                       class="view-btn <?= $calView === 'list' ? 'active' : '' ?>"><i class="fa-solid fa-list"></i></a>
+                    <a href="?page=calendar&view=calendar&team_filter=<?= $filterTeam ?>&month=<?= $calMonth ?>&year=<?= $calYear ?>"
+                       class="view-btn <?= $calView === 'calendar' ? 'active' : '' ?>"><i class="fa-solid fa-calendar"></i></a>
+                </div>
+
+                <button class="btn btn-primary btn-sm" data-action="open-import-modal" onclick="document.getElementById('importCalendarModal').classList.add('active')">
+                    <i class="fa-solid fa-file-import"></i> Import Calendar
+                </button>
+            </div>
         </div>
-
-        <button class="btn btn-primary btn-sm" data-action="open-import-modal" onclick="document.getElementById('importCalendarModal').classList.add('active')">
-            <i class="fas fa-file-import"></i> Import Calendar
-        </button>
     </div>
 </div>
 
 <?php if ($calView === 'calendar'): ?>
 <!-- Calendar View -->
-<div class="card">
-    <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
+<div class="sessions-calendar">
+    <div class="calendar-header">
         <a href="?page=calendar&view=calendar&team_filter=<?= $filterTeam ?>&month=<?= $prevMonth ?>&year=<?= $prevYear ?>"
-           class="btn btn-sm btn-secondary" data-action="prev-month">
-            <i class="fas fa-chevron-left"></i>
+           class="btn-icon" data-action="prev-month">
+            <i class="fa-solid fa-chevron-left"></i>
         </a>
-        <div style="display:flex;align-items:center;gap:12px;">
-            <h3 style="margin:0;"><?= $monthName ?> <?= $calYear ?></h3>
-            <?php if ($calMonth !== $todayMonth || $calYear !== $todayYear): ?>
-                <a href="?page=calendar&view=calendar&team_filter=<?= $filterTeam ?>&month=<?= $todayMonth ?>&year=<?= $todayYear ?>"
-                   class="btn btn-sm btn-outline" data-action="today">Today</a>
-            <?php endif; ?>
-        </div>
+        <h3><?= $monthName ?> <?= $calYear ?></h3>
         <a href="?page=calendar&view=calendar&team_filter=<?= $filterTeam ?>&month=<?= $nextMonth ?>&year=<?= $nextYear ?>"
-           class="btn btn-sm btn-secondary" data-action="next-month">
-            <i class="fas fa-chevron-right"></i>
+           class="btn-icon" data-action="next-month">
+            <i class="fa-solid fa-chevron-right"></i>
         </a>
     </div>
-    <div class="card-body" style="padding:0;">
-        <!-- Day Headers -->
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);">
-            <?php foreach (['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] as $dayName): ?>
-                <div style="padding:10px;text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;">
-                    <?= $dayName ?>
-                </div>
-            <?php endforeach; ?>
-        </div>
+    <div class="calendar-weekdays">
+        <?php foreach (['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] as $dayName): ?>
+            <span><?= $dayName ?></span>
+        <?php endforeach; ?>
+    </div>
+    <div class="calendar-grid" data-calendar-grid>
+        <?php
+        // Empty cells before first day
+        for ($i = 0; $i < $firstDayOfWeek; $i++): ?>
+            <div class="calendar-day other-month"></div>
+        <?php endfor; ?>
 
-        <!-- Calendar Grid -->
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);" data-calendar-grid>
-            <?php
-            // Empty cells before first day
-            for ($i = 0; $i < $firstDayOfWeek; $i++): ?>
-                <div style="min-height:100px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;background:rgba(0,0,0,0.1);"></div>
-            <?php endfor; ?>
-
-            <?php for ($day = 1; $day <= $daysInMonth; $day++):
-                $isToday = ($day === $today && $calMonth === $todayMonth && $calYear === $todayYear);
-                $dayGames = $gamesByDay[$day] ?? [];
-            ?>
-                <div style="min-height:100px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;<?= $isToday ? 'background:rgba(107,70,193,0.08);' : '' ?>"
-                     data-calendar-day="<?= $day ?>">
-                    <div style="font-size:13px;font-weight:<?= $isToday ? '700' : '500' ?>;color:<?= $isToday ? 'var(--primary-light)' : 'var(--text-secondary)' ?>;margin-bottom:4px;">
-                        <?= $day ?>
-                    </div>
-                    <?php foreach ($dayGames as $game):
-                        $status = getGameStatus($game);
-                        $statusColor = gameStatusColor($status);
-                    ?>
-                        <div class="calendar-game-event"
-                             data-game-id="<?= (int)$game['id'] ?>"
-                             data-game-status="<?= $status ?>"
-                             style="font-size:11px;padding:3px 6px;margin-bottom:3px;border-radius:4px;background:<?= $statusColor ?>22;border-left:3px solid <?= $statusColor ?>;color:var(--text-white);cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"
-                             onclick="toggleGameDetail(this)">
-                            <span style="font-weight:600;">
-                                <?php if (!empty($game['opponent_name'])): ?>
-                                    vs <?= htmlspecialchars($game['opponent_name']) ?>
-                                <?php else: ?>
-                                    Game
-                                <?php endif; ?>
-                            </span>
-                            <?php if ($game['home_score'] !== null && $game['away_score'] !== null): ?>
-                                <span style="margin-left:4px;"><?= (int)$game['home_score'] ?>-<?= (int)$game['away_score'] ?></span>
+        <?php for ($day = 1; $day <= $daysInMonth; $day++):
+            $isToday = ($day === $today && $calMonth === $todayMonth && $calYear === $todayYear);
+            $dayGames = $gamesByDay[$day] ?? [];
+            $dayClasses = 'calendar-day';
+            if ($isToday) $dayClasses .= ' today';
+            if (!empty($dayGames)) $dayClasses .= ' has-sessions';
+        ?>
+            <div class="<?= $dayClasses ?>" data-calendar-day="<?= $day ?>">
+                <div class="day-number"><?= $day ?></div>
+                <?php foreach ($dayGames as $game):
+                    $status = getGameStatus($game);
+                    $statusColor = gameStatusColor($status);
+                ?>
+                    <div class="session-indicator"
+                         data-game-id="<?= (int)$game['id'] ?>"
+                         data-game-status="<?= $status ?>"
+                         style="background:<?= $statusColor ?>; cursor:pointer;"
+                         onclick="toggleGameDetail(this)">
+                        <?php if (!empty($game['opponent_name'])): ?>
+                            vs <?= htmlspecialchars($game['opponent_name']) ?>
+                        <?php else: ?>
+                            Game
+                        <?php endif; ?>
+                        <!-- Expanded details (hidden by default) -->
+                        <div class="game-detail-expanded" style="display:none;margin-top:4px;white-space:normal;font-size:10px;color:rgba(255,255,255,0.8);">
+                            <?php if (!empty($game['location'])): ?>
+                                <div><i class="fa-solid fa-location-dot"></i> <?= htmlspecialchars($game['location']) ?></div>
                             <?php endif; ?>
-                            <!-- Expanded details (hidden by default) -->
-                            <div class="game-detail-expanded" style="display:none;margin-top:4px;white-space:normal;font-size:10px;color:var(--text-secondary);">
-                                <?php if (!empty($game['location'])): ?>
-                                    <div><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($game['location']) ?></div>
-                                <?php endif; ?>
-                                <div><i class="fas fa-clock"></i> <?= date('g:i A', strtotime($game['game_date'])) ?></div>
-                                <?php if ((int)$game['video_count'] > 0): ?>
-                                    <div><i class="fas fa-video"></i> <?= (int)$game['video_count'] ?> video<?= (int)$game['video_count'] !== 1 ? 's' : '' ?></div>
-                                <?php endif; ?>
-                            </div>
+                            <div><i class="fa-solid fa-clock"></i> <?= date('g:i A', strtotime($game['game_date'])) ?></div>
+                            <?php if ((int)$game['video_count'] > 0): ?>
+                                <div><i class="fa-solid fa-video"></i> <?= (int)$game['video_count'] ?> video<?= (int)$game['video_count'] !== 1 ? 's' : '' ?></div>
+                            <?php endif; ?>
                         </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endfor; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endfor; ?>
 
-            <?php
-            // Empty cells after last day
-            $totalCells = $firstDayOfWeek + $daysInMonth;
-            $remaining = (7 - ($totalCells % 7)) % 7;
-            for ($i = 0; $i < $remaining; $i++): ?>
-                <div style="min-height:100px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;background:rgba(0,0,0,0.1);"></div>
-            <?php endfor; ?>
-        </div>
+        <?php
+        // Empty cells after last day
+        $totalCells = $firstDayOfWeek + $daysInMonth;
+        $remaining = (7 - ($totalCells % 7)) % 7;
+        for ($i = 0; $i < $remaining; $i++): ?>
+            <div class="calendar-day other-month"></div>
+        <?php endfor; ?>
     </div>
 </div>
 
@@ -332,7 +320,7 @@ $sourceTypeLabels = [
 <!-- List View -->
 <?php if (empty($games)): ?>
     <div class="empty-state-card">
-        <div class="empty-icon"><i class="fas fa-calendar-alt"></i></div>
+        <div class="empty-icon"><i class="fa-solid fa-calendar"></i></div>
         <p>No games found. Import a calendar or add games to get started.</p>
     </div>
 <?php else: ?>
@@ -361,9 +349,9 @@ $sourceTypeLabels = [
                                     <?php endif; ?>
                                 </div>
                                 <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                                    <span><i class="fas fa-clock"></i> <?= date('g:i A', $gameDate) ?></span>
+                                    <span><i class="fa-solid fa-clock"></i> <?= date('g:i A', $gameDate) ?></span>
                                     <?php if (!empty($game['location'])): ?>
-                                        <span><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($game['location']) ?></span>
+                                        <span><i class="fa-solid fa-location-dot"></i> <?= htmlspecialchars($game['location']) ?></span>
                                     <?php endif; ?>
                                     <?php if (!empty($game['game_type'])): ?>
                                         <span class="badge badge-info" style="font-size:10px;"><?= htmlspecialchars($game['game_type']) ?></span>
@@ -382,7 +370,7 @@ $sourceTypeLabels = [
                                 <?php endif; ?>
                                 <?php if ((int)$game['video_count'] > 0): ?>
                                     <span class="badge badge-info" style="font-size:11px;">
-                                        <i class="fas fa-video"></i> <?= (int)$game['video_count'] ?>
+                                        <i class="fa-solid fa-video"></i> <?= (int)$game['video_count'] ?>
                                     </span>
                                 <?php endif; ?>
                             </div>
@@ -399,14 +387,14 @@ $sourceTypeLabels = [
 <?php if (!empty($calendarImports)): ?>
 <div class="card" style="margin-top:24px;">
     <div class="card-header">
-        <h3><i class="fas fa-sync-alt"></i> Calendar Imports</h3>
+        <h3><i class="fa-solid fa-sync-alt"></i> Calendar Imports</h3>
     </div>
     <div class="card-body" style="padding:0;">
         <?php foreach ($calendarImports as $import): ?>
             <div class="session-list-card" data-import-id="<?= (int)$import['id'] ?>">
                 <div class="session-date-column" style="background:rgba(107,70,193,0.1);">
                     <div style="font-size:20px;color:var(--primary-light);">
-                        <i class="fas fa-<?= $import['source_type'] === 'ical' ? 'link' : ($import['source_type'] === 'csv' ? 'file-csv' : 'hockey-puck') ?>"></i>
+                        <i class="fa-solid fa-<?= $import['source_type'] === 'ical' ? 'link' : ($import['source_type'] === 'csv' ? 'file-csv' : 'hockey-puck') ?>"></i>
                     </div>
                 </div>
                 <div class="session-details-column" style="flex:1;">
@@ -417,7 +405,7 @@ $sourceTypeLabels = [
                             &middot; <?= htmlspecialchars($import['team_name']) ?>
                         <?php endif; ?>
                         <?php if ($import['auto_sync']): ?>
-                            &middot; <span style="color:var(--success);"><i class="fas fa-sync"></i> Auto-sync</span>
+                            &middot; <span style="color:var(--success);"><i class="fa-solid fa-sync"></i> Auto-sync</span>
                         <?php endif; ?>
                         <?php if (!empty($import['last_synced_at'])): ?>
                             &middot; Last synced: <?= date('M j, Y g:i A', strtotime($import['last_synced_at'])) ?>
@@ -434,7 +422,7 @@ $sourceTypeLabels = [
 <div class="modal-overlay" id="importCalendarModal">
     <div class="modal" style="max-width:520px;">
         <div class="modal-header" style="display:flex;align-items:center;justify-content:space-between;">
-            <h3><i class="fas fa-file-import"></i> Import Calendar</h3>
+            <h3><i class="fa-solid fa-file-import"></i> Import Calendar</h3>
             <button class="modal-close" onclick="document.getElementById('importCalendarModal').classList.remove('active')" style="background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;">&times;</button>
         </div>
         <div class="modal-body">
@@ -498,7 +486,7 @@ $sourceTypeLabels = [
         <div class="modal-footer" style="display:flex;gap:8px;justify-content:flex-end;padding:16px 20px;border-top:1px solid var(--border);">
             <button class="btn btn-secondary" onclick="document.getElementById('importCalendarModal').classList.remove('active')">Cancel</button>
             <button class="btn btn-primary" data-action="submit-import" onclick="document.getElementById('importCalendarForm').submit()">
-                <i class="fas fa-file-import"></i> Import
+                <i class="fa-solid fa-file-import"></i> Import
             </button>
         </div>
     </div>

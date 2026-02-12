@@ -1,0 +1,819 @@
+/* =========================================================
+   ARCTIC WOLVES VIDEO REVIEW - COMPONENT LIBRARY
+   Standardized components matching parent Arctic_Wolves app
+   ========================================================= */
+
+/* =========================================================
+   1. BUTTONS - Standardized across entire site
+   ========================================================= */
+
+.btn, button:not(.modal-close), input[type="submit"], input[type="button"], .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 45px;
+    padding: 0 24px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    white-space: nowrap;
+    line-height: 1;
+    box-sizing: border-box;
+}
+
+.btn-primary, button[type="submit"]:not(.btn-secondary):not(.btn-danger) {
+    background: #6B46C1;
+    color: white;
+}
+
+.btn-primary i, button[type="submit"]:not(.btn-secondary):not(.btn-danger) i {
+    color: inherit;
+}
+
+.btn-primary:hover {
+    background: #7C3AED;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(107, 70, 193, 0.4);
+}
+
+.btn-secondary, a.btn-secondary {
+    background: #2D2D3F;
+    color: #E0E0E0;
+    border: 1px solid #3A3A4F;
+    text-decoration: none;
+}
+
+.btn-secondary:hover, a.btn-secondary:hover {
+    background: #3A3A4F;
+    border-color: #6B46C1;
+    transform: translateY(-1px);
+    color: #E0E0E0;
+}
+
+.btn-success {
+    background: #10B981;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.btn-danger, .btn-delete {
+    background: #EF4444;
+    color: white;
+}
+
+.btn-danger:hover, .btn-delete:hover {
+    background: #DC2626;
+    transform: translateY(-1px);
+}
+
+.btn-warning {
+    background: #F59E0B;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: #D97706;
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #2D2D3F;
+    color: #E0E0E0;
+}
+
+.btn-outline:hover {
+    border-color: #6B46C1;
+    background: rgba(107, 70, 193, 0.1);
+    color: #6B46C1;
+}
+
+/* Button Sizes */
+.btn-sm, .btn-small {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 13px;
+}
+
+.btn-lg, .btn-large {
+    height: 45px;
+    padding: 0 32px;
+    font-size: 16px;
+}
+
+.btn-block, .btn-full-width {
+    width: 100%;
+}
+
+/* Button States */
+.btn:disabled, button:disabled, .btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(0) !important;
+}
+
+/* Button Groups */
+.btn-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Icon Buttons */
+.btn-icon {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid var(--border, #2D2D3F);
+    color: var(--text-white, #fff);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.btn-icon:hover {
+    background: var(--primary, #6B46C1);
+    border-color: var(--primary, #6B46C1);
+}
+
+/* =========================================================
+   2. FORM INPUTS - Modern and consistent
+   ========================================================= */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"],
+select,
+textarea {
+    box-sizing: border-box;
+    width: 100%;
+    height: 45px;
+    padding: 0 16px;
+    background: #0A0A0F;
+    border: 1px solid #2D2D3F;
+    border-radius: 8px;
+    color: #E0E0E0;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    transition: all 0.3s ease;
+}
+
+textarea {
+    height: auto;
+    min-height: 100px;
+    padding: 12px 16px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #7C3AED;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+    background: #13131A;
+}
+
+input:hover:not(:disabled):not(:focus),
+select:hover:not(:disabled):not(:focus),
+textarea:hover:not(:disabled):not(:focus) {
+    border-color: #6B46C1;
+}
+
+::placeholder {
+    color: #6B6B7B;
+    opacity: 1;
+}
+
+/* Select Dropdown Custom Arrow */
+select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%236B46C1" d="M6 9L1 4h10z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 12px;
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+/* Form Labels */
+label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #A8A8B8;
+    margin-bottom: 8px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* =========================================================
+   3. CARDS & PANELS
+   ========================================================= */
+
+.card, .panel, .widget {
+    background: #16161F;
+    border: 1px solid #2D2D3F;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover, .panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card-header, .panel-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #2D2D3F;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, rgba(107, 70, 193, 0.05) 0%, transparent 100%);
+    min-height: 64px;
+}
+
+.card-header h2, .card-header h3, .panel-header h2, .panel-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1.3;
+}
+
+.card-header i, .panel-header i {
+    color: #6B46C1;
+    font-size: 18px;
+}
+
+.card-body, .panel-body {
+    padding: 24px;
+}
+
+.card-footer, .panel-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #2D2D3F;
+    background: rgba(13, 13, 20, 0.5);
+}
+
+/* Stat Cards */
+.stat-card {
+    background: linear-gradient(135deg, #16161F 0%, #1A1A25 100%);
+    border: 1px solid #2D2D3F;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    border-color: #6B46C1;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(107, 70, 193, 0.2);
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 900;
+    color: #6B46C1;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #A8A8B8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   4. TABLES
+   ========================================================= */
+
+.table-wrapper, .table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 24px;
+    border: 1px solid #2D2D3F;
+    border-radius: 12px;
+    background: #13131A;
+}
+
+table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+}
+
+table thead {
+    background: #16161F;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+table thead th {
+    padding: 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: #A8A8B8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #2D2D3F;
+    white-space: nowrap;
+}
+
+table tbody td {
+    padding: 16px;
+    font-size: 13px;
+    color: #E0E0E0;
+    border-bottom: 1px solid #2D2D3F;
+    vertical-align: middle;
+}
+
+table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+table tbody tr:hover {
+    background: #1A1A2E;
+}
+
+table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* =========================================================
+   5. MODALS
+   ========================================================= */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    padding: 20px;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #16161F;
+    border-radius: 12px;
+    border: 1px solid #2D2D3F;
+    max-width: 700px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    padding: 24px;
+    border-bottom: 1px solid #2D2D3F;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 72px;
+}
+
+.modal-header h2, .modal-header h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    color: #FFFFFF;
+}
+
+.modal-body {
+    padding: 24px;
+    overflow-x: hidden;
+}
+
+.modal-footer {
+    padding: 24px;
+    border-top: 1px solid #2D2D3F;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #9CA3AF;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.modal-close:hover {
+    color: #E0E0E0;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================================
+   6. BADGES & TAGS
+   ========================================================= */
+
+.badge, .tag, .label {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+}
+
+.badge-primary { background: rgba(107, 70, 193, 0.15); color: #8B5CF6; }
+.badge-success { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+.badge-warning { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+.badge-danger { background: rgba(239, 68, 68, 0.15); color: #EF4444; }
+.badge-info { background: rgba(59, 130, 246, 0.15); color: #3B82F6; }
+.badge-secondary { background: rgba(107, 107, 123, 0.15); color: #9CA3AF; }
+
+/* =========================================================
+   7. ALERTS
+   ========================================================= */
+
+.alert {
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    border: 1px solid;
+}
+
+.alert-success { background: rgba(16, 185, 129, 0.1); border-color: #10B981; color: #10B981; }
+.alert-error, .alert-danger { background: rgba(239, 68, 68, 0.1); border-color: #EF4444; color: #EF4444; }
+.alert-warning { background: rgba(245, 158, 11, 0.1); border-color: #F59E0B; color: #F59E0B; }
+.alert-info { background: rgba(107, 70, 193, 0.1); border-color: #6B46C1; color: #6B46C1; }
+
+/* =========================================================
+   8. ACTION BARS & FILTER BARS
+   ========================================================= */
+
+.action-bar, .filter-bar, .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    padding: 16px;
+    background: #16161F;
+    border: 1px solid #2D2D3F;
+    border-radius: 8px;
+}
+
+/* =========================================================
+   9. CALENDAR COMPONENTS - Matching parent app
+   ========================================================= */
+
+.calendar-content {
+    margin-top: 0;
+}
+
+.sessions-calendar {
+    background: var(--bg-card, #16161F);
+    border: 1px solid var(--border, #2D2D3F);
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-white, #fff);
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.calendar-weekdays span {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted, #6B6B7B);
+    padding: 8px 0;
+    text-transform: uppercase;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendar-day {
+    min-height: 100px;
+    background: var(--bg-main, #0A0A0F);
+    border: 1px solid var(--border, #2D2D3F);
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.calendar-day:hover {
+    border-color: var(--primary, #6B46C1);
+}
+
+.calendar-day.other-month {
+    opacity: 0.4;
+}
+
+.calendar-day.today {
+    border-color: var(--primary, #6B46C1);
+    background: rgba(107, 70, 193, 0.1);
+}
+
+.calendar-day.has-sessions {
+    background: rgba(107, 70, 193, 0.08);
+}
+
+.day-number {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-white, #fff);
+    margin-bottom: 8px;
+}
+
+.session-indicator {
+    background: linear-gradient(135deg, var(--primary, #6B46C1), var(--primary-light, #9F7AEA));
+    color: white;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* View toggle matching parent */
+.view-toggle {
+    display: flex;
+    gap: 5px;
+    background: var(--bg-main, #0A0A0F);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.view-btn {
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted, #6B6B7B);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.view-btn:hover {
+    color: var(--text-white, #fff);
+    background: var(--bg-card, #16161F);
+}
+
+.view-btn.active {
+    background: var(--primary, #6B46C1);
+    color: white;
+}
+
+.view-btn + .view-btn {
+}
+
+/* Filter box matching parent */
+.filter-box {
+    background: var(--bg-card, #16161F);
+    border: 1px solid var(--border, #2D2D3F);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.filter-box-header {
+    background: var(--bg-main, #0A0A0F);
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border, #2D2D3F);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-white, #fff);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-box-header i {
+    color: var(--primary, #6B46C1);
+}
+
+.filter-box-content {
+    padding: 20px 24px;
+}
+
+.filter-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.filter-field {
+    flex: 1;
+    min-width: 180px;
+}
+
+.filter-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary, #A8A8B8);
+    margin-bottom: 6px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Results info */
+.results-info {
+    font-size: 14px;
+    color: var(--text-secondary, #A8A8B8);
+    font-weight: 600;
+}
+
+.view-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* =========================================================
+   10. LOADING STATES
+   ========================================================= */
+
+.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #2D2D3F;
+    border-top-color: #6B46C1;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* =========================================================
+   11. UTILITY CLASSES
+   ========================================================= */
+
+.mt-0 { margin-top: 0 !important; }
+.mt-1 { margin-top: 8px !important; }
+.mt-2 { margin-top: 16px !important; }
+.mt-3 { margin-top: 24px !important; }
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: 8px !important; }
+.mb-2 { margin-bottom: 16px !important; }
+.mb-3 { margin-bottom: 24px !important; }
+.p-0 { padding: 0 !important; }
+.p-1 { padding: 8px !important; }
+.p-2 { padding: 16px !important; }
+.p-3 { padding: 24px !important; }
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-flex { display: flex !important; }
+.d-grid { display: grid !important; }
+.text-center { text-align: center !important; }
+.text-primary { color: #6B46C1 !important; }
+.text-success { color: #10B981 !important; }
+.text-danger { color: #EF4444 !important; }
+.text-warning { color: #F59E0B !important; }
+.text-muted { color: #6B6B7B !important; }
+.text-white { color: #FFFFFF !important; }
+.fw-bold { font-weight: 700 !important; }
+.fw-black { font-weight: 900 !important; }
+.gap-1 { gap: 8px !important; }
+.gap-2 { gap: 16px !important; }
+.gap-3 { gap: 24px !important; }
+
+/* =========================================================
+   12. RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .action-bar, .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-row {
+        flex-direction: column;
+    }
+    
+    .filter-field {
+        min-width: 100%;
+    }
+}

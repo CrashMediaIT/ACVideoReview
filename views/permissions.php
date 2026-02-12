@@ -101,7 +101,7 @@ $permissionLabels = [
 ];
 $permissionIcons = [
     'can_upload'  => 'fa-upload',
-    'can_clip'    => 'fa-cut',
+    'can_clip'    => 'fa-scissors',
     'can_tag'     => 'fa-tag',
     'can_publish' => 'fa-paper-plane',
     'can_delete'  => 'fa-trash',
@@ -110,9 +110,8 @@ $permissionIcons = [
 
 <!-- Page Header -->
 <div class="page-header">
-    <div class="page-header-icon"><i class="fas fa-user-shield"></i></div>
-    <div class="page-header-info">
-        <h1 class="page-title">Video Permissions</h1>
+    <div class="page-header-content">
+        <h1 class="page-title"><i class="fa-solid fa-user-shield"></i> Video Permissions</h1>
         <p class="page-description">Manage who can upload, edit, and publish video content</p>
     </div>
 </div>
@@ -152,8 +151,8 @@ $permissionIcons = [
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Filter</button>
-                <a href="?page=permissions&team_id=<?= $selectedTeam ?>" class="btn btn-secondary btn-sm"><i class="fas fa-times"></i> Clear</a>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-search"></i> Filter</button>
+                <a href="?page=permissions&team_id=<?= $selectedTeam ?>" class="btn btn-secondary btn-sm"><i class="fa-solid fa-times"></i> Clear</a>
             </div>
         </form>
     </div>
@@ -162,12 +161,12 @@ $permissionIcons = [
 <!-- Permissions Table -->
 <div class="card">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-        <h3><i class="fas fa-users-cog"></i> Team Members (<?= count($teamUsers) ?>)</h3>
+        <h3><i class="fa-solid fa-users-cog"></i> Team Members (<?= count($teamUsers) ?>)</h3>
     </div>
     <div class="card-body" style="padding:0;">
         <?php if (empty($teamUsers)): ?>
             <div class="empty-state-card">
-                <div class="empty-icon"><i class="fas fa-users"></i></div>
+                <div class="empty-icon"><i class="fa-solid fa-users"></i></div>
                 <p>No team members found. <?= empty($teams) ? 'No teams exist yet.' : 'Select a team above or adjust your filters.' ?></p>
             </div>
         <?php else: ?>
@@ -179,7 +178,7 @@ $permissionIcons = [
                             <th style="padding:12px;text-align:left;font-size:12px;color:var(--text-muted);font-weight:600;white-space:nowrap;">Role</th>
                             <?php foreach ($permissionLabels as $permKey => $permLabel): ?>
                                 <th style="padding:12px;text-align:center;font-size:12px;color:var(--text-muted);font-weight:600;white-space:nowrap;">
-                                    <i class="fas <?= $permissionIcons[$permKey] ?>" title="<?= $permLabel ?>"></i><br>
+                                    <i class="fa-solid <?= $permissionIcons[$permKey] ?>" title="<?= $permLabel ?>"></i><br>
                                     <?= $permLabel ?>
                                 </th>
                             <?php endforeach; ?>
@@ -229,11 +228,11 @@ $permissionIcons = [
                                     <div style="display:flex;gap:4px;justify-content:center;">
                                         <button class="btn btn-sm btn-outline" style="font-size:10px;padding:4px 8px;"
                                                 data-action="grant-all" onclick="setAllPermissions(<?= $uid ?>, true)" title="Grant All">
-                                            <i class="fas fa-check-double"></i>
+                                            <i class="fa-solid fa-check-double"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline" style="font-size:10px;padding:4px 8px;color:var(--error);border-color:var(--error);"
                                                 data-action="revoke-all" onclick="setAllPermissions(<?= $uid ?>, false)" title="Revoke All">
-                                            <i class="fas fa-times"></i>
+                                            <i class="fa-solid fa-times"></i>
                                         </button>
                                     </div>
                                 </td>

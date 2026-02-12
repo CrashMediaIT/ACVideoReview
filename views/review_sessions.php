@@ -105,36 +105,33 @@ $sessionTypeLabels = [
 ];
 
 $sessionTypeIcons = [
-    'team'         => 'fas fa-users',
-    'individual'   => 'fas fa-user',
-    'coaches_only' => 'fas fa-user-shield',
+    'team'         => 'fa-solid fa-users',
+    'individual'   => 'fa-solid fa-user',
+    'coaches_only' => 'fa-solid fa-user-shield',
 ];
 ?>
 
 <!-- Page Header -->
 <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-    <div style="display:flex;align-items:center;gap:12px;">
-        <div class="page-header-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-        <div class="page-header-info">
-            <h1 class="page-title">Review Sessions</h1>
-            <p class="page-description">Schedule and manage video review sessions for your team.</p>
-        </div>
+    <div class="page-header-content">
+        <h1 class="page-title"><i class="fa-solid fa-chalkboard-user"></i> Review Sessions</h1>
+        <p class="page-description">Schedule and manage video review sessions for your team.</p>
     </div>
     <button class="btn btn-primary" onclick="document.getElementById('createSessionModal').style.display='flex'">
-        <i class="fas fa-plus"></i> New Session
+        <i class="fa-solid fa-plus"></i> New Session
     </button>
 </div>
 
 <!-- Flash Messages -->
 <?php if (!empty($_SESSION['success'])): ?>
     <div class="alert alert-success" style="margin-bottom:16px;padding:12px 16px;background:rgba(39,174,96,0.15);border:1px solid var(--success);border-radius:8px;color:var(--success);">
-        <i class="fas fa-check-circle"></i> <?= htmlspecialchars($_SESSION['success']) ?>
+        <i class="fa-solid fa-circle-check"></i> <?= htmlspecialchars($_SESSION['success']) ?>
     </div>
     <?php unset($_SESSION['success']); ?>
 <?php endif; ?>
 <?php if (!empty($_SESSION['error'])): ?>
     <div class="alert alert-error" style="margin-bottom:16px;padding:12px 16px;background:rgba(231,76,60,0.15);border:1px solid var(--error);border-radius:8px;color:var(--error);">
-        <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($_SESSION['error']) ?>
+        <i class="fa-solid fa-exclamation-circle"></i> <?= htmlspecialchars($_SESSION['error']) ?>
     </div>
     <?php unset($_SESSION['error']); ?>
 <?php endif; ?>
@@ -150,12 +147,12 @@ $sessionTypeIcons = [
 <!-- Sessions List -->
 <div class="card">
     <div class="card-header">
-        <h3><i class="fas fa-list"></i> Sessions (<?= count($sessions) ?>)</h3>
+        <h3><i class="fa-solid fa-list"></i> Sessions (<?= count($sessions) ?>)</h3>
     </div>
     <div class="card-body">
         <?php if (empty($sessions)): ?>
             <div class="empty-state-card">
-                <div class="empty-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                <div class="empty-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
                 <p>No review sessions found. Create your first session to get started.</p>
             </div>
         <?php else: ?>
@@ -186,7 +183,7 @@ $sessionTypeIcons = [
                                 <?= $isCompleted ? 'Completed' : ($isPastDue ? 'Past Due' : 'Upcoming') ?>
                             </span>
                             <span class="badge badge-primary" style="font-size:10px;">
-                                <i class="<?= $sessionTypeIcons[$session['session_type']] ?? 'fas fa-users' ?>" style="margin-right:3px;"></i>
+                                <i class="<?= $sessionTypeIcons[$session['session_type']] ?? 'fa-solid fa-users' ?>" style="margin-right:3px;"></i>
                                 <?= $sessionTypeLabels[$session['session_type']] ?? htmlspecialchars($session['session_type']) ?>
                             </span>
                         </div>
@@ -197,15 +194,15 @@ $sessionTypeIcons = [
                         <?php endif; ?>
                         <div style="font-size:12px;color:var(--text-muted);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap;">
                             <?php if (!empty($session['game_team'])): ?>
-                                <span><i class="fas fa-hockey-puck" style="margin-right:3px;"></i>
+                                <span><i class="fa-solid fa-hockey-puck" style="margin-right:3px;"></i>
                                     <?= htmlspecialchars($session['game_team']) ?>
                                     <?php if (!empty($session['opponent_name'])): ?>
                                         vs <?= htmlspecialchars($session['opponent_name']) ?>
                                     <?php endif; ?>
                                 </span>
                             <?php endif; ?>
-                            <span><i class="fas fa-film" style="margin-right:3px;"></i> <?= (int)$session['clip_count'] ?> clips</span>
-                            <span><i class="fas fa-clock" style="margin-right:3px;"></i> Created <?= timeAgo($session['created_at']) ?></span>
+                            <span><i class="fa-solid fa-film" style="margin-right:3px;"></i> <?= (int)$session['clip_count'] ?> clips</span>
+                            <span><i class="fa-solid fa-clock" style="margin-right:3px;"></i> Created <?= timeAgo($session['created_at']) ?></span>
                         </div>
                     </div>
                     <div style="display:flex;gap:8px;">
@@ -214,7 +211,7 @@ $sessionTypeIcons = [
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                             <input type="hidden" name="session_id" value="<?= (int)$session['id'] ?>">
                             <button type="submit" class="btn btn-sm" style="color:var(--error);border-color:var(--error);" title="Delete">
-                                <i class="fas fa-trash"></i>
+                                <i class="fa-solid fa-trash"></i>
                             </button>
                         </form>
                     </div>
@@ -228,9 +225,9 @@ $sessionTypeIcons = [
 <div id="createSessionModal" class="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;padding:20px;">
     <div class="card" style="max-width:600px;width:100%;max-height:90vh;overflow-y:auto;">
         <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-            <h3><i class="fas fa-plus-circle"></i> New Review Session</h3>
+            <h3><i class="fa-solid fa-plus-circle"></i> New Review Session</h3>
             <button class="btn btn-sm" onclick="document.getElementById('createSessionModal').style.display='none'" style="background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;">
-                <i class="fas fa-times"></i>
+                <i class="fa-solid fa-times"></i>
             </button>
         </div>
         <div class="card-body">
@@ -322,7 +319,7 @@ $sessionTypeIcons = [
                         Cancel
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Create Session
+                        <i class="fa-solid fa-floppy-disk"></i> Create Session
                     </button>
                 </div>
             </form>

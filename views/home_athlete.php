@@ -135,22 +135,21 @@ function timeAgo($datetime) {
 // Notification icon mapping
 function notificationIcon($type) {
     $icons = [
-        'new_video'            => 'fas fa-video',
-        'clip_tagged'          => 'fas fa-tag',
-        'game_plan_published'  => 'fas fa-chess',
-        'review_session'       => 'fas fa-users',
-        'video_ready'          => 'fas fa-check-circle',
-        'calendar_update'      => 'fas fa-calendar',
+        'new_video'            => 'fa-solid fa-video',
+        'clip_tagged'          => 'fa-solid fa-tag',
+        'game_plan_published'  => 'fa-solid fa-chess',
+        'review_session'       => 'fa-solid fa-users',
+        'video_ready'          => 'fa-solid fa-circle-check',
+        'calendar_update'      => 'fa-solid fa-calendar',
     ];
-    return $icons[$type] ?? 'fas fa-bell';
+    return $icons[$type] ?? 'fa-solid fa-bell';
 }
 ?>
 
 <!-- Page Header -->
 <div class="page-header">
-    <div class="page-header-icon"><i class="fas fa-home"></i></div>
-    <div class="page-header-info">
-        <h1 class="page-title">Dashboard</h1>
+    <div class="page-header-content">
+        <h1 class="page-title"><i class="fa-solid fa-house"></i> Dashboard</h1>
         <p class="page-description">Welcome back, <?= htmlspecialchars($user_name) ?>! Here's your latest updates.</p>
     </div>
 </div>
@@ -158,22 +157,22 @@ function notificationIcon($type) {
 <!-- Stat Cards Row -->
 <div class="stat-cards-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
     <div class="stat-card">
-        <div class="stat-icon" style="color:var(--info);"><i class="fas fa-calendar-alt"></i></div>
+        <div class="stat-icon" style="color:var(--info);"><i class="fa-solid fa-calendar"></i></div>
         <div class="stat-number"><?= $statUpcomingGames ?></div>
         <div class="stat-label">Upcoming Games</div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="color:var(--success);"><i class="fas fa-film"></i></div>
+        <div class="stat-icon" style="color:var(--success);"><i class="fa-solid fa-film"></i></div>
         <div class="stat-number"><?= $statNewClips ?></div>
         <div class="stat-label">New Clips (7 days)</div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="color:var(--warning);"><i class="fas fa-clock"></i></div>
+        <div class="stat-icon" style="color:var(--warning);"><i class="fa-solid fa-clock"></i></div>
         <div class="stat-number"><?= $statPendingReviews ?></div>
         <div class="stat-label">Pending Reviews</div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="color:var(--primary-light);"><i class="fas fa-cut"></i></div>
+        <div class="stat-icon" style="color:var(--primary-light);"><i class="fa-solid fa-scissors"></i></div>
         <div class="stat-number"><?= $statTotalClips ?></div>
         <div class="stat-label">Total Clips</div>
     </div>
@@ -182,12 +181,12 @@ function notificationIcon($type) {
 <!-- Upcoming Games -->
 <div class="card" style="margin-bottom:24px;">
     <div class="card-header">
-        <h3><i class="fas fa-hockey-puck"></i> Upcoming Games</h3>
+        <h3><i class="fa-solid fa-hockey-puck"></i> Upcoming Games</h3>
     </div>
     <div class="card-body">
         <?php if (empty($upcomingGames)): ?>
             <div class="empty-state-card">
-                <div class="empty-icon"><i class="fas fa-calendar-times"></i></div>
+                <div class="empty-icon"><i class="fa-solid fa-calendar-times"></i></div>
                 <p>No upcoming games scheduled.</p>
             </div>
         <?php else: ?>
@@ -212,7 +211,7 @@ function notificationIcon($type) {
                         </div>
                         <?php if (!empty($game['location'])): ?>
                             <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">
-                                <i class="fas fa-map-marker-alt" style="margin-right:4px;"></i>
+                                <i class="fa-solid fa-location-dot" style="margin-right:4px;"></i>
                                 <?= htmlspecialchars($game['location']) ?>
                             </div>
                         <?php endif; ?>
@@ -226,7 +225,7 @@ function notificationIcon($type) {
 <!-- Recent Clips Tagged In -->
 <div class="card" style="margin-bottom:24px;">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-        <h3><i class="fas fa-film"></i> Recent Clips You're Tagged In</h3>
+        <h3><i class="fa-solid fa-film"></i> Recent Clips You're Tagged In</h3>
         <?php if (!empty($recentClips)): ?>
             <a href="?page=my_clips" class="btn btn-sm btn-outline">View All</a>
         <?php endif; ?>
@@ -234,7 +233,7 @@ function notificationIcon($type) {
     <div class="card-body">
         <?php if (empty($recentClips)): ?>
             <div class="empty-state-card">
-                <div class="empty-icon"><i class="fas fa-film"></i></div>
+                <div class="empty-icon"><i class="fa-solid fa-film"></i></div>
                 <p>No clips yet. You'll see clips here once a coach tags you in game footage.</p>
             </div>
         <?php else: ?>
@@ -246,7 +245,7 @@ function notificationIcon($type) {
                                 <img src="<?= htmlspecialchars($clip['thumbnail_path']) ?>" alt="Clip thumbnail" loading="lazy">
                             <?php else: ?>
                                 <div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-secondary);">
-                                    <i class="fas fa-play-circle" style="font-size:32px;color:var(--primary-light);"></i>
+                                    <i class="fa-solid fa-circle-play" style="font-size:32px;color:var(--primary-light);"></i>
                                 </div>
                             <?php endif; ?>
                             <?php if (!empty($clip['duration'])): ?>
@@ -259,7 +258,7 @@ function notificationIcon($type) {
                             </div>
                             <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">
                                 <?php if (!empty($clip['camera_angle'])): ?>
-                                    <span><i class="fas fa-video" style="margin-right:3px;"></i><?= htmlspecialchars($clip['camera_angle']) ?></span>
+                                    <span><i class="fa-solid fa-video" style="margin-right:3px;"></i><?= htmlspecialchars($clip['camera_angle']) ?></span>
                                     &middot;
                                 <?php endif; ?>
                                 <?php if (!empty($clip['role_in_clip'])): ?>
@@ -279,12 +278,12 @@ function notificationIcon($type) {
 <!-- Notifications -->
 <div class="card">
     <div class="card-header">
-        <h3><i class="fas fa-bell"></i> Notifications</h3>
+        <h3><i class="fa-solid fa-bell"></i> Notifications</h3>
     </div>
     <div class="card-body">
         <?php if (empty($notifications)): ?>
             <div class="empty-state-card">
-                <div class="empty-icon"><i class="fas fa-bell-slash"></i></div>
+                <div class="empty-icon"><i class="fa-solid fa-bell-slash"></i></div>
                 <p>No notifications right now. You're all caught up!</p>
             </div>
         <?php else: ?>
