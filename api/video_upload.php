@@ -27,7 +27,6 @@ if (!DB_CONNECTED || !$pdo) {
 
 $user_id = (int)$_SESSION['user_id'];
 $user_role = $_SESSION['role'] ?? 'athlete';
-$team_id = (int)($_SESSION['team_id'] ?? 0);
 
 // Only coaches can upload
 if (!in_array($user_role, COACH_ROLES, true)) {
@@ -73,6 +72,9 @@ try {
     $camera_angle = sanitizeInput($_POST['camera_angle'] ?? 'wide');
     $game_schedule_id = !empty($_POST['game_schedule_id']) ? (int)$_POST['game_schedule_id'] : null;
     $recorded_at = !empty($_POST['recorded_at']) ? sanitizeInput($_POST['recorded_at']) : null;
+
+    // Use team_id from form submission; fall back to session value
+    $team_id = !empty($_POST['team_id']) ? (int)$_POST['team_id'] : (int)($_SESSION['team_id'] ?? 0);
 
     // Determine source type (upload, recording, or ndi)
     $source_type = 'upload';
