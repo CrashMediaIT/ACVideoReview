@@ -57,11 +57,14 @@ function validateRole(array $required_roles): bool {
 }
 
 /**
- * Redirect to login if user is not authenticated
+ * Redirect to login if user is not authenticated.
+ * Includes a from_login flag so index.php can detect redirect loops
+ * when the PHP session is not shared across subdomains.
  */
 function requireAuth(): void {
     if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-        header('Location: ' . MAIN_APP_URL . '/login.php?redirect=' . urlencode(APP_URL));
+        $returnUrl = APP_URL . '?from_login=1';
+        header('Location: ' . MAIN_APP_URL . '/login.php?redirect=' . urlencode($returnUrl));
         exit;
     }
 }

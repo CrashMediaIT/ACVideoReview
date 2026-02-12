@@ -59,16 +59,18 @@ try {
     }
 
     if ($plan_id) {
-        // Update existing plan
+        // Update existing plan — verify ownership via created_by
         $stmt = $pdo->prepare(
             "UPDATE vr_game_plans SET
-                game_schedule_id = :game_id, plan_type = :type, title = :title,
+                game_schedule_id = :game_id, team_id = :team_id,
+                plan_type = :type, title = :title,
                 description = :desc, offensive_strategy = :offense,
                 defensive_strategy = :defense, special_teams_notes = :special
-             WHERE id = :id AND team_id = :team_id"
+             WHERE id = :id AND created_by = :uid"
         );
         $stmt->execute([
             ':game_id' => $game_schedule_id,
+            ':team_id' => $team_id,
             ':type'    => $plan_type,
             ':title'   => $title,
             ':desc'    => $description,
@@ -76,7 +78,7 @@ try {
             ':defense' => $defensive_strategy,
             ':special' => $special_teams_notes,
             ':id'      => $plan_id,
-            ':team_id' => $team_id,
+            ':uid'     => $user_id,
         ]);
         $_SESSION['success'] = 'Game plan updated successfully.';
     } else {
@@ -101,28 +103,44 @@ try {
         $_SESSION['success'] = 'Game plan created successfully.';
     }
 
-    // Save line assignments if provided
+    // Save line assignments if provided.
+    // The form sends lines as lines[line_type][line_number][position] = athlete_id.
     if (isset($_POST['lines']) && is_array($_POST['lines'])) {
         $plan_target_id = $plan_id ?: $pdo->lastInsertId();
+
+        // Whitelist: must match the ENUM in vr_line_assignments.line_type
+        $valid_line_types = ['forward', 'defense', 'power_play', 'penalty_kill', 'overtime'];
+        $valid_positions  = ['LW', 'C', 'RW', 'LD', 'RD', 'G'];
 
         // Clear existing assignments
         $stmt = $pdo->prepare("DELETE FROM vr_line_assignments WHERE game_plan_id = :pid");
         $stmt->execute([':pid' => $plan_target_id]);
 
         $line_stmt = $pdo->prepare(
-            "INSERT INTO vr_line_assignments (game_plan_id, line_type, line_number, position, athlete_id, notes)
-             VALUES (:pid, :type, :num, :pos, :ath, :notes)"
+            "INSERT INTO vr_line_assignments (game_plan_id, line_type, line_number, position, athlete_id)
+             VALUES (:pid, :type, :num, :pos, :ath)"
         );
 
-        foreach ($_POST['lines'] as $line) {
-            $line_stmt->execute([
-                ':pid'   => $plan_target_id,
-                ':type'  => sanitizeInput($line['line_type'] ?? 'forward'),
-                ':num'   => (int)($line['line_number'] ?? 1),
-                ':pos'   => sanitizeInput($line['position'] ?? ''),
-                ':ath'   => (int)($line['athlete_id'] ?? 0),
-                ':notes' => sanitizeInput($line['notes'] ?? ''),
-            ]);
+        foreach ($_POST['lines'] as $line_type => $numbers) {
+            if (!is_array($numbers)) continue;
+            if (!in_array($line_type, $valid_line_types, true)) continue;
+            foreach ($numbers as $line_number => $positions) {
+                if (!is_array($positions)) continue;
+                $line_number = (int)$line_number;
+                if ($line_number < 1 || $line_number > 10) continue;
+                foreach ($positions as $position => $athlete_id) {
+                    if (!in_array($position, $valid_positions, true)) continue;
+                    $athlete_id = (int)$athlete_id;
+                    if ($athlete_id <= 0) continue;
+                    $line_stmt->execute([
+                        ':pid'  => $plan_target_id,
+                        ':type' => $line_type,
+                        ':num'  => $line_number,
+                        ':pos'  => $position,
+                        ':ath'  => $athlete_id,
+                    ]);
+                }
+            }
         }
     }
 } catch (Exception $e) {

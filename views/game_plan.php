@@ -4,6 +4,17 @@
  * Variables available: $pdo, $user_id, $user_role, $team_id, $user_name, $isCoach, $isAdmin, $csrf_token
  */
 
+if (!$isCoach) {
+    ?>
+    <div class="empty-state-card">
+        <div class="empty-icon"><i class="fa-solid fa-lock"></i></div>
+        <p>Game plans are only available to coaches.</p>
+        <a href="?page=home" class="btn btn-primary" style="margin-top:12px;">Go to Dashboard</a>
+    </div>
+    <?php
+    return;
+}
+
 $activeTab = isset($_GET['tab']) ? sanitizeInput($_GET['tab']) : 'pre_game';
 $validTabs = ['pre_game', 'post_game', 'practice'];
 if (!in_array($activeTab, $validTabs, true)) {
