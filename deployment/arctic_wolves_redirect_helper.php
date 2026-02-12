@@ -16,6 +16,22 @@
  * This checks for a ?redirect= query parameter (set by ACVideoReview's index.php)
  * and sends the user back to the subdomain app after login, provided the URL is a
  * trusted arcticwolves.ca subdomain.
+ *
+ * ── Where to integrate ──
+ *
+ * login.php:
+ *   1. Near the top (after session_start), call captureRedirectParam() so the
+ *      redirect URL survives the POST form submission.
+ *   2. Replace EVERY "header('Location: dashboard.php'); exit();" with
+ *      safeRedirectAfterLogin().
+ *
+ * process_login.php:
+ *   1. After the successful-login block that sets $_SESSION variables,
+ *      replace "header('Location: dashboard.php'); exit();" with
+ *      safeRedirectAfterLogin().
+ *   2. For PWA logins that redirect to pwa.php / pwa_tablet.php, pass the
+ *      PWA target as the $default parameter:
+ *      safeRedirectAfterLogin($loginTarget);
  */
 
 /**

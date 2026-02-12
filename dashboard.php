@@ -19,6 +19,30 @@ $team_id    = $_SESSION['team_id']    ?? null;
 $isCoach = in_array($user_role, COACH_ROLES, true);
 $isAdmin = in_array($user_role, ADMIN_ROLES, true);
 
+// If team_id is not in the session (main app doesn't set it), look it up
+if ($team_id === null && DB_CONNECTED && $pdo) {
+    try {
+        if ($isCoach) {
+            $stmt = dbQuery($pdo,
+                "SELECT team_id FROM team_coach_assignments WHERE coach_id = :uid LIMIT 1",
+                [':uid' => $user_id]
+            );
+        } else {
+            $stmt = dbQuery($pdo,
+                "SELECT team_id FROM team_roster WHERE user_id = :uid LIMIT 1",
+                [':uid' => $user_id]
+            );
+        }
+        $row = $stmt->fetch();
+        if ($row) {
+            $team_id = (int)$row['team_id'];
+            $_SESSION['team_id'] = $team_id;
+        }
+    } catch (PDOException $e) {
+        error_log('Team ID lookup error: ' . $e->getMessage());
+    }
+}
+
 // Page routing
 $page = isset($_GET['page']) ? sanitizeInput($_GET['page']) : 'home';
 

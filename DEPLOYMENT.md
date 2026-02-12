@@ -76,25 +76,47 @@ Two helper files are provided in `deployment/` for drop-in use in the Arctic_Wol
 # 1. Copy helpers into the Arctic_Wolves root
 cp deployment/arctic_wolves_session_boot.php   /config/www/Arctic_Wolves/session_boot.php
 cp deployment/arctic_wolves_redirect_helper.php /config/www/Arctic_Wolves/redirect_helper.php
-
-# 2. In login.php, process_login.php, index.php, dashboard.php — replace:
-#      session_start();
-#    with:
-#      require_once __DIR__ . '/session_boot.php';
-
-# 3. In login.php — near the top (after session_start replacement), add:
-#      require_once __DIR__ . '/redirect_helper.php';
-#      captureRedirectParam();
-#    And replace every:
-#      header("Location: dashboard.php");
-#      exit();
-#    with:
-#      safeRedirectAfterLogin();
-
-# 4. In process_login.php — replace the same dashboard redirect:
-#      require_once __DIR__ . '/redirect_helper.php';
-#      safeRedirectAfterLogin();
 ```
+
+**config/session.php** — The main app already has this file for cross-subdomain
+cookie sharing. Verify it sets the cookie domain to `.arcticwolves.ca` before
+`session_start()`. If it does, you only need to ensure every file that calls
+`session_start()` includes it first — especially `process_login.php`.
+
+**process_login.php** (critical) — This file calls `session_start()` without
+including `config/session.php`, so the session cookie is scoped to the exact
+host. After `session_regenerate_id(true)`, the new cookie is invisible to
+subdomains.
+
+```php
+// At the top of process_login.php, REPLACE:
+session_start();
+// WITH:
+require_once __DIR__ . '/config/session.php';
+session_start();
+
+// Then, after the successful-login block, REPLACE every:
+header("Location: dashboard.php");
+exit();
+// WITH:
+require_once __DIR__ . '/redirect_helper.php';
+safeRedirectAfterLogin();
+
+// For PWA logins, pass the PWA target as the default:
+require_once __DIR__ . '/redirect_helper.php';
+safeRedirectAfterLogin($loginTarget);
+```
+
+**login.php** — Near the top (after the session_start replacement), persist
+the redirect parameter so it survives the POST form submission:
+
+```php
+require_once __DIR__ . '/redirect_helper.php';
+captureRedirectParam();
+```
+
+Then replace every `header("Location: dashboard.php"); exit();` in the POST
+handler with `safeRedirectAfterLogin();`.
 
 ### Directory Structure
 ```
@@ -540,22 +562,35 @@ docker exec nginx cat /config/www/ACVideoReview/video_review.env
 ```
 
 ### Session/Auth Issues — Redirects Back to Main Dashboard After Login
-The most common cause is the main Arctic Wolves app not sharing session cookies or not redirecting back after login.
+There are two common causes:
+
+**1. Session cookie not shared across subdomains.**
+In the browser, after logging in at arcticwolves.ca, check DevTools → Application → Cookies.
+The `PHPSESSID` cookie should have Domain `.arcticwolves.ca` (with the leading dot), not `arcticwolves.ca`.
+If the domain is wrong, `process_login.php` in the main app is not including `config/session.php`
+before `session_start()`. After `session_regenerate_id(true)`, the new cookie defaults to the exact
+host and subdomains cannot access the session.
+
 ```bash
-# 1. Verify the session cookie domain is set to .arcticwolves.ca
-#    In the browser, after logging in at arcticwolves.ca, check DevTools → Application → Cookies.
-#    The PHPSESSID cookie should have Domain ".arcticwolves.ca", not "arcticwolves.ca".
-#    Fix: install deployment/arctic_wolves_session_boot.php in the main app (see above).
-
-# 2. Verify the redirect parameter is being honoured
-#    Visit: https://arcticwolves.ca/login.php?redirect=https://review.arcticwolves.ca
-#    After login you should be sent to review.arcticwolves.ca, NOT dashboard.php.
-#    Fix: install deployment/arctic_wolves_redirect_helper.php in the main app (see above).
-
-# 3. Verify session variable mapping
-#    The main app stores the user role as $_SESSION['user_role'].
-#    ACVideoReview normalises this to $_SESSION['role'] automatically in initSession().
+# Fix: ensure process_login.php includes config/session.php before session_start()
+# See "Cross-Subdomain Authentication" above for details.
 ```
+
+**2. Redirect parameter not honoured after login.**
+Visit `https://arcticwolves.ca/login.php?redirect=https://review.arcticwolves.ca`, log in, and
+check whether you are sent to `review.arcticwolves.ca` or `dashboard.php`.
+If you end up at `dashboard.php`, the main app's login handler is not using the redirect helper.
+
+```bash
+# Fix: install deployment/arctic_wolves_redirect_helper.php in the main app
+# and call captureRedirectParam() + safeRedirectAfterLogin() (see above).
+```
+
+**3. Verify session variable mapping.**
+The main app stores the user role as `$_SESSION['user_role']`.
+ACVideoReview normalises this to `$_SESSION['role']` automatically in `initSession()`.
+If team_id is missing from the session, ACVideoReview will look it up from the database
+on first dashboard load.
 
 ### Session/Auth Issues — General
 ```bash

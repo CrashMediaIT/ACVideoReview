@@ -27,7 +27,6 @@ if (!DB_CONNECTED || !$pdo) {
 
 $user_id = (int)$_SESSION['user_id'];
 $user_role = $_SESSION['role'] ?? 'athlete';
-$team_id = (int)($_SESSION['team_id'] ?? 0);
 
 // Only coaches can manage game plans
 if (!in_array($user_role, COACH_ROLES, true)) {
@@ -45,6 +44,9 @@ try {
     $offensive_strategy = $_POST['offensive_strategy'] ?? '';
     $defensive_strategy = $_POST['defensive_strategy'] ?? '';
     $special_teams_notes = sanitizeInput($_POST['special_teams_notes'] ?? '');
+
+    // Use team_id from form submission; fall back to session value
+    $team_id = !empty($_POST['team_id']) ? (int)$_POST['team_id'] : (int)($_SESSION['team_id'] ?? 0);
 
     // Validate plan type
     $valid_types = ['pre_game', 'post_game', 'practice'];

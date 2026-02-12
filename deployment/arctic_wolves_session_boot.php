@@ -14,6 +14,13 @@
  *
  * This sets the session cookie domain to ".arcticwolves.ca" so the session is
  * visible to both arcticwolves.ca and review.arcticwolves.ca (or any subdomain).
+ *
+ * IMPORTANT: This file MUST be included in process_login.php BEFORE session_start().
+ * process_login.php calls session_regenerate_id(true) after login, which sends a
+ * new Set-Cookie header. Without session_set_cookie_params() beforehand the new
+ * cookie defaults to the exact host ("arcticwolves.ca") and subdomains cannot see
+ * the session. If config/session.php already exists and does the same thing, you
+ * can require that file instead — but process_login.php must include it.
  */
 
 if (session_status() === PHP_SESSION_ACTIVE) {
