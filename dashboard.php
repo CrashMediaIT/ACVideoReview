@@ -67,7 +67,10 @@ $csrf_token = generateCsrfToken();
         }
         .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
         .sidebar-header img { width: 36px; height: 36px; }
-        .sidebar-header h2 { font-size: 16px; font-weight: 600; white-space: nowrap; }
+        .sidebar-header-text { display: flex; flex-direction: column; }
+        .sidebar-header h2 { font-size: 16px; font-weight: 600; white-space: nowrap; line-height: 1.2; }
+        .sidebar-header h2 .header-separator { color: var(--primary-light); }
+        .sidebar-subheader { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; line-height: 1.4; }
         .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
         .sidebar-nav a {
             display: flex; align-items: center; gap: 12px; padding: 12px 20px;
@@ -157,8 +160,11 @@ $csrf_token = generateCsrfToken();
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <i class="fas fa-play-circle" style="font-size:28px;color:var(--primary-light);"></i>
-        <h2>Video Review</h2>
+        <img src="css/arctic-wolves-logo.svg" alt="Arctic Wolves" width="36" height="36">
+        <div class="sidebar-header-text">
+            <h2>Arctic<span class="header-separator">_</span>Wolves</h2>
+            <span class="sidebar-subheader">Game Plan</span>
+        </div>
     </div>
 
     <nav class="sidebar-nav">
