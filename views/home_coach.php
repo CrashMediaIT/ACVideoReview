@@ -155,7 +155,7 @@ if (!function_exists('notificationIcon')) {
             'clip_tagged'          => 'fa-solid fa-tag',
             'game_plan_published'  => 'fa-solid fa-chess',
             'review_session'       => 'fa-solid fa-users',
-            'video_ready'          => 'fa-solid fa-check-circle',
+            'video_ready'          => 'fa-solid fa-circle-check',
             'calendar_update'      => 'fa-solid fa-calendar',
         ];
         return $icons[$type] ?? 'fa-solid fa-bell';
@@ -193,7 +193,7 @@ $videoStatusBadge = [
 <!-- Stat Cards Row -->
 <div class="stat-cards-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
     <div class="stat-card">
-        <div class="stat-icon" style="color:var(--warning);"><i class="fa-solid fa-exclamation-triangle"></i></div>
+        <div class="stat-icon" style="color:var(--warning);"><i class="fa-solid fa-triangle-exclamation"></i></div>
         <div class="stat-number"><?= $statVideosNeedProcessing ?></div>
         <div class="stat-label">Videos Need Processing</div>
     </div>
@@ -218,7 +218,7 @@ $videoStatusBadge = [
 <?php if (!empty($videosNeedProcessing)): ?>
 <div class="card" style="margin-bottom:24px;border-left:3px solid var(--warning);">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-        <h3><i class="fa-solid fa-exclamation-triangle" style="color:var(--warning);"></i> Videos Needing Processing</h3>
+        <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--warning);"></i> Videos Needing Processing</h3>
         <a href="?page=film_room" class="btn btn-sm btn-primary">Go to Film Room</a>
     </div>
     <div class="card-body">

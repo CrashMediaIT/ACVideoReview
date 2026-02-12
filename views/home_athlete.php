@@ -139,7 +139,7 @@ function notificationIcon($type) {
         'clip_tagged'          => 'fa-solid fa-tag',
         'game_plan_published'  => 'fa-solid fa-chess',
         'review_session'       => 'fa-solid fa-users',
-        'video_ready'          => 'fa-solid fa-check-circle',
+        'video_ready'          => 'fa-solid fa-circle-check',
         'calendar_update'      => 'fa-solid fa-calendar',
     ];
     return $icons[$type] ?? 'fa-solid fa-bell';
@@ -245,7 +245,7 @@ function notificationIcon($type) {
                                 <img src="<?= htmlspecialchars($clip['thumbnail_path']) ?>" alt="Clip thumbnail" loading="lazy">
                             <?php else: ?>
                                 <div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-secondary);">
-                                    <i class="fa-solid fa-play-circle" style="font-size:32px;color:var(--primary-light);"></i>
+                                    <i class="fa-solid fa-circle-play" style="font-size:32px;color:var(--primary-light);"></i>
                                 </div>
                             <?php endif; ?>
                             <?php if (!empty($clip['duration'])): ?>

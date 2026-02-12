@@ -202,7 +202,7 @@ if (!function_exists('timeAgo')) {
         </a>
         <a href="?page=game_plan&tab=practice"
            class="page-tab <?= $activeTab === 'practice' ? 'active' : '' ?>">
-            <i class="fa-solid fa-running"></i> Practice Plans
+            <i class="fa-solid fa-person-running"></i> Practice Plans
         </a>
     </div>
 </div>
@@ -219,7 +219,7 @@ if (!function_exists('timeAgo')) {
     <!-- Plan Details -->
     <div class="card" style="margin-bottom:24px;">
         <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-            <h3><i class="fa-solid fa-edit"></i> <?= $editPlanId ? 'Edit' : 'New' ?> <?= $planTypeLabels[$activeTab] ?? '' ?> Plan</h3>
+            <h3><i class="fa-solid fa-pen-to-square"></i> <?= $editPlanId ? 'Edit' : 'New' ?> <?= $planTypeLabels[$activeTab] ?? '' ?> Plan</h3>
             <a href="?page=game_plan&tab=<?= htmlspecialchars($activeTab) ?>" class="btn btn-sm btn-secondary">
                 <i class="fa-solid fa-arrow-left"></i> Back to List
             </a>
@@ -275,7 +275,7 @@ if (!function_exists('timeAgo')) {
         <div class="card-body">
             <!-- Forward Lines -->
             <h4 style="font-size:14px;font-weight:600;color:var(--primary-light);margin-bottom:12px;">
-                <i class="fa-solid fa-skating"></i> Forward Lines
+                <i class="fa-solid fa-person-skating"></i> Forward Lines
             </h4>
             <?php for ($line = 1; $line <= 4; $line++): ?>
                 <div style="margin-bottom:16px;padding:12px;background:var(--bg-secondary);border-radius:var(--radius-md);border:1px solid var(--border);">
@@ -304,7 +304,7 @@ if (!function_exists('timeAgo')) {
 
             <!-- Defense Pairs -->
             <h4 style="font-size:14px;font-weight:600;color:var(--primary-light);margin-bottom:12px;margin-top:24px;">
-                <i class="fa-solid fa-shield-alt"></i> Defense Pairs
+                <i class="fa-solid fa-shield-halved"></i> Defense Pairs
             </h4>
             <?php for ($pair = 1; $pair <= 3; $pair++): ?>
                 <div style="margin-bottom:16px;padding:12px;background:var(--bg-secondary);border-radius:var(--radius-md);border:1px solid var(--border);">
@@ -381,7 +381,7 @@ if (!function_exists('timeAgo')) {
 
             <!-- Penalty Kill -->
             <h4 style="font-size:14px;font-weight:600;color:var(--info);margin-bottom:12px;margin-top:24px;">
-                <i class="fa-solid fa-hand-paper"></i> Penalty Kill Units
+                <i class="fa-solid fa-hand"></i> Penalty Kill Units
             </h4>
             <?php for ($unit = 1; $unit <= 2; $unit++): ?>
                 <div style="margin-bottom:16px;padding:12px;background:var(--bg-secondary);border-radius:var(--radius-md);border:1px solid var(--border);">
@@ -445,7 +445,7 @@ if (!function_exists('timeAgo')) {
         <div class="card-body">
             <?php if (!$editPlanId): ?>
                 <div style="font-size:13px;color:var(--text-muted);text-align:center;padding:20px;">
-                    <i class="fa-solid fa-info-circle"></i> Save the plan first, then you can add play drawings.
+                    <i class="fa-solid fa-circle-info"></i> Save the plan first, then you can add play drawings.
                 </div>
             <?php elseif (empty($editDrawPlays)): ?>
                 <div class="empty-state-card">
@@ -484,7 +484,7 @@ if (!function_exists('timeAgo')) {
     <div style="display:flex;gap:12px;justify-content:flex-end;margin-bottom:24px;">
         <a href="?page=game_plan&tab=<?= htmlspecialchars($activeTab) ?>" class="btn btn-secondary">Cancel</a>
         <button type="submit" name="action" value="save" class="btn btn-primary" data-action="save-plan">
-            <i class="fa-solid fa-save"></i> Save as Draft
+            <i class="fa-solid fa-floppy-disk"></i> Save as Draft
         </button>
         <button type="submit" name="action" value="publish" class="btn btn-primary" style="background:var(--success);" data-action="publish-plan">
             <i class="fa-solid fa-paper-plane"></i> Publish
@@ -519,15 +519,15 @@ if (!function_exists('timeAgo')) {
             <!-- Drawing Tools Toolbar -->
             <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;padding:8px;background:var(--bg-secondary);border-radius:var(--radius-md);border:1px solid var(--border);">
                 <button type="button" class="btn btn-sm btn-secondary" data-tool="pen" onclick="setDrawTool('pen')" title="Pen"><i class="fa-solid fa-pen"></i></button>
-                <button type="button" class="btn btn-sm btn-secondary" data-tool="arrow" onclick="setDrawTool('arrow')" title="Arrow"><i class="fa-solid fa-long-arrow-alt-right"></i></button>
-                <button type="button" class="btn btn-sm btn-secondary" data-tool="circle" onclick="setDrawTool('circle')" title="Circle"><i class="far fa-circle"></i></button>
+                <button type="button" class="btn btn-sm btn-secondary" data-tool="arrow" onclick="setDrawTool('arrow')" title="Arrow"><i class="fa-solid fa-arrow-right-long"></i></button>
+                <button type="button" class="btn btn-sm btn-secondary" data-tool="circle" onclick="setDrawTool('circle')" title="Circle"><i class="fa-regular fa-circle"></i></button>
                 <button type="button" class="btn btn-sm btn-secondary" data-tool="line" onclick="setDrawTool('line')" title="Line"><i class="fa-solid fa-minus"></i></button>
                 <button type="button" class="btn btn-sm btn-secondary" data-tool="text" onclick="setDrawTool('text')" title="Text"><i class="fa-solid fa-font"></i></button>
-                <button type="button" class="btn btn-sm btn-secondary" data-tool="player" onclick="setDrawTool('player')" title="Player Marker"><i class="fa-solid fa-user-circle"></i></button>
+                <button type="button" class="btn btn-sm btn-secondary" data-tool="player" onclick="setDrawTool('player')" title="Player Marker"><i class="fa-solid fa-circle-user"></i></button>
                 <div style="width:1px;background:var(--border);margin:0 4px;"></div>
                 <button type="button" class="btn btn-sm btn-secondary" data-tool="eraser" onclick="setDrawTool('eraser')" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
                 <button type="button" class="btn btn-sm btn-secondary" data-action="undo" onclick="undoDraw()" title="Undo"><i class="fa-solid fa-undo"></i></button>
-                <button type="button" class="btn btn-sm btn-secondary" data-action="clear" onclick="clearCanvas()" title="Clear All"><i class="fa-solid fa-trash-alt"></i></button>
+                <button type="button" class="btn btn-sm btn-secondary" data-action="clear" onclick="clearCanvas()" title="Clear All"><i class="fa-solid fa-trash-can"></i></button>
                 <div style="width:1px;background:var(--border);margin:0 4px;"></div>
                 <input type="color" id="drawColor" value="#6B46C1" title="Draw Color" style="width:32px;height:32px;border:none;border-radius:4px;cursor:pointer;background:none;">
             </div>
@@ -575,7 +575,7 @@ if (!function_exists('timeAgo')) {
         <div class="modal-footer" style="display:flex;gap:8px;justify-content:flex-end;padding:16px 20px;border-top:1px solid var(--border);">
             <button class="btn btn-secondary" onclick="document.getElementById('drawPlayModal').classList.remove('active')">Cancel</button>
             <button class="btn btn-primary" data-action="save-play" onclick="savePlay()">
-                <i class="fa-solid fa-save"></i> Save Play
+                <i class="fa-solid fa-floppy-disk"></i> Save Play
             </button>
         </div>
     </div>
@@ -740,7 +740,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div style="display:flex;gap:6px;flex-wrap:wrap;">
                         <a href="?page=game_plan&tab=<?= htmlspecialchars($activeTab) ?>&edit=<?= (int)$plan['id'] ?>"
                            class="btn btn-sm btn-primary" data-action="edit-plan">
-                            <i class="fa-solid fa-edit"></i> Edit
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
                         </a>
                         <?php if ($plan['status'] === 'draft'): ?>
                             <form method="POST" action="api/game_plan_status.php" style="display:inline;">
@@ -758,7 +758,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <input type="hidden" name="plan_id" value="<?= (int)$plan['id'] ?>">
                                 <input type="hidden" name="status" value="archived">
                                 <button type="submit" class="btn btn-sm btn-outline" data-action="archive">
-                                    <i class="fa-solid fa-archive"></i> Archive
+                                    <i class="fa-solid fa-box-archive"></i> Archive
                                 </button>
                             </form>
                         <?php endif; ?>

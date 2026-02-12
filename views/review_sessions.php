@@ -114,7 +114,7 @@ $sessionTypeIcons = [
 <!-- Page Header -->
 <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
     <div class="page-header-content">
-        <h1 class="page-title"><i class="fa-solid fa-chalkboard-teacher"></i> Review Sessions</h1>
+        <h1 class="page-title"><i class="fa-solid fa-chalkboard-user"></i> Review Sessions</h1>
         <p class="page-description">Schedule and manage video review sessions for your team.</p>
     </div>
     <button class="btn btn-primary" onclick="document.getElementById('createSessionModal').style.display='flex'">
@@ -125,7 +125,7 @@ $sessionTypeIcons = [
 <!-- Flash Messages -->
 <?php if (!empty($_SESSION['success'])): ?>
     <div class="alert alert-success" style="margin-bottom:16px;padding:12px 16px;background:rgba(39,174,96,0.15);border:1px solid var(--success);border-radius:8px;color:var(--success);">
-        <i class="fa-solid fa-check-circle"></i> <?= htmlspecialchars($_SESSION['success']) ?>
+        <i class="fa-solid fa-circle-check"></i> <?= htmlspecialchars($_SESSION['success']) ?>
     </div>
     <?php unset($_SESSION['success']); ?>
 <?php endif; ?>
@@ -152,7 +152,7 @@ $sessionTypeIcons = [
     <div class="card-body">
         <?php if (empty($sessions)): ?>
             <div class="empty-state-card">
-                <div class="empty-icon"><i class="fa-solid fa-chalkboard-teacher"></i></div>
+                <div class="empty-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
                 <p>No review sessions found. Create your first session to get started.</p>
             </div>
         <?php else: ?>
@@ -319,7 +319,7 @@ $sessionTypeIcons = [
                         Cancel
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-save"></i> Create Session
+                        <i class="fa-solid fa-floppy-disk"></i> Create Session
                     </button>
                 </div>
             </form>

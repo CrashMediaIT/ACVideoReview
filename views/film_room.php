@@ -549,7 +549,7 @@ if ($activeTab === 'upload'):
                                         <?php endif; ?>
                                         <button class="btn btn-sm btn-outline" data-action="edit-details" title="Edit Details"
                                                 onclick="openEditVideoModal(<?= (int)$video['id'] ?>, '<?= htmlspecialchars(addslashes($video['title'])) ?>')">
-                                            <i class="fa-solid fa-edit"></i>
+                                            <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                         <form method="POST" action="api/video_delete.php" style="display:inline;" onsubmit="return confirm('Delete this video?');">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
@@ -1021,7 +1021,7 @@ elseif ($activeTab === 'clip_editor'):
 
                         <div style="display:flex;gap:8px;">
                             <button type="submit" class="btn btn-primary" data-action="save-clip">
-                                <i class="fa-solid fa-save"></i> Save Clip
+                                <i class="fa-solid fa-floppy-disk"></i> Save Clip
                             </button>
                             <a href="?page=pair_device" class="btn btn-outline" data-action="start-telestration">
                                 <i class="fa-solid fa-pen"></i> Start Telestration
@@ -1073,7 +1073,7 @@ elseif ($activeTab === 'clip_editor'):
                                         </div>
                                         <div style="display:flex;gap:4px;">
                                             <button class="btn btn-sm btn-outline" data-action="edit-clip" title="Edit" onclick="event.stopPropagation();">
-                                                <i class="fa-solid fa-edit"></i>
+                                                <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
                                             <form method="POST" action="api/clip_delete.php" style="display:inline;" onsubmit="event.stopPropagation();return confirm('Delete this clip?');">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">

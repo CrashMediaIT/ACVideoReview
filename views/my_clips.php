@@ -224,7 +224,7 @@ $categoryLabels = [
                         <img src="<?= htmlspecialchars($clip['thumbnail_path']) ?>" alt="Clip thumbnail" loading="lazy">
                     <?php else: ?>
                         <div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-secondary);">
-                            <i class="fa-solid fa-play-circle" style="font-size:36px;color:var(--primary-light);"></i>
+                            <i class="fa-solid fa-circle-play" style="font-size:36px;color:var(--primary-light);"></i>
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($clip['duration'])): ?>

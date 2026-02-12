@@ -317,7 +317,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                                 <img src="<?= htmlspecialchars($clip['thumbnail_path']) ?>" alt="Clip thumbnail" loading="lazy">
                             <?php else: ?>
                                 <div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-secondary);">
-                                    <i class="fa-solid fa-play-circle" style="font-size:32px;color:var(--primary-light);"></i>
+                                    <i class="fa-solid fa-circle-play" style="font-size:32px;color:var(--primary-light);"></i>
                                 </div>
                             <?php endif; ?>
                             <?php if (!empty($clip['duration'])): ?>
@@ -595,7 +595,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                                                 <img src="<?= htmlspecialchars($gc['thumbnail_path']) ?>" alt="" loading="lazy">
                                             <?php else: ?>
                                                 <div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-main);">
-                                                    <i class="fa-solid fa-play-circle" style="font-size:24px;color:var(--primary-light);"></i>
+                                                    <i class="fa-solid fa-circle-play" style="font-size:24px;color:var(--primary-light);"></i>
                                                 </div>
                                             <?php endif; ?>
                                             <?php if (!empty($gc['duration'])): ?>
@@ -790,7 +790,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
                                     <img src="<?= htmlspecialchars($oc['thumbnail_path']) ?>" alt="" loading="lazy">
                                 <?php else: ?>
                                     <div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg-main);">
-                                        <i class="fa-solid fa-play-circle" style="font-size:24px;color:var(--primary-light);"></i>
+                                        <i class="fa-solid fa-circle-play" style="font-size:24px;color:var(--primary-light);"></i>
                                     </div>
                                 <?php endif; ?>
                                 <?php if (!empty($oc['duration'])): ?>

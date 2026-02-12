@@ -74,7 +74,7 @@ if (defined('DB_CONNECTED') && DB_CONNECTED && $pdo) {
 
 $toolOptions = [
     'freehand'      => ['icon' => 'fa-pen', 'label' => 'Freehand'],
-    'arrow'         => ['icon' => 'fa-long-arrow-alt-right', 'label' => 'Arrow'],
+    'arrow'         => ['icon' => 'fa-arrow-right-long', 'label' => 'Arrow'],
     'line'          => ['icon' => 'fa-minus', 'label' => 'Line'],
     'rectangle'     => ['icon' => 'fa-square', 'label' => 'Rectangle'],
     'circle'        => ['icon' => 'fa-circle', 'label' => 'Circle'],
@@ -286,7 +286,7 @@ $colorOptions = [
             <i class="fa-solid fa-trash"></i>
         </button>
         <button class="tool-btn" id="saveAnnotationBtn" title="Save Annotation" data-action="save-annotation" style="color:var(--success);">
-            <i class="fa-solid fa-save"></i>
+            <i class="fa-solid fa-floppy-disk"></i>
         </button>
     </div>
     <?php endif; ?>
@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (res.success) {
                         saveBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
                         setTimeout(function() {
-                            saveBtn.innerHTML = '<i class="fa-solid fa-save"></i>';
+                            saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i>';
                         }, 2000);
                     }
                 })

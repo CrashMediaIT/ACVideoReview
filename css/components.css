@@ -143,17 +143,17 @@
     align-items: center;
     justify-content: center;
     border-radius: 8px;
-    background: var(--bg-card, #16161F);
+    background: transparent;
     border: 1px solid var(--border, #2D2D3F);
-    color: var(--text-secondary, #A8A8B8);
+    color: var(--text-white, #fff);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s;
+    text-decoration: none;
 }
 
 .btn-icon:hover {
-    background: rgba(107, 70, 193, 0.1);
+    background: var(--primary, #6B46C1);
     border-color: var(--primary, #6B46C1);
-    color: var(--primary-light, #8B5CF6);
 }
 
 /* =========================================================
@@ -544,15 +544,14 @@ table tbody tr:last-child td {
     background: var(--bg-card, #16161F);
     border: 1px solid var(--border, #2D2D3F);
     border-radius: 12px;
-    overflow: hidden;
+    padding: 24px;
 }
 
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border, #2D2D3F);
+    margin-bottom: 20px;
 }
 
 .calendar-header h3 {
@@ -565,57 +564,105 @@ table tbody tr:last-child td {
 .calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    border-bottom: 1px solid var(--border, #2D2D3F);
-    background: var(--bg-secondary, #13131A);
+    gap: 4px;
+    margin-bottom: 8px;
 }
 
 .calendar-weekdays span {
-    padding: 12px;
     text-align: center;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-muted, #6B6B7B);
+    padding: 8px 0;
     text-transform: uppercase;
 }
 
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendar-day {
+    min-height: 100px;
+    background: var(--bg-main, #0A0A0F);
+    border: 1px solid var(--border, #2D2D3F);
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.calendar-day:hover {
+    border-color: var(--primary, #6B46C1);
+}
+
+.calendar-day.other-month {
+    opacity: 0.4;
+}
+
+.calendar-day.today {
+    border-color: var(--primary, #6B46C1);
+    background: rgba(107, 70, 193, 0.1);
+}
+
+.calendar-day.has-sessions {
+    background: rgba(107, 70, 193, 0.08);
+}
+
+.day-number {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-white, #fff);
+    margin-bottom: 8px;
+}
+
+.session-indicator {
+    background: linear-gradient(135deg, var(--primary, #6B46C1), var(--primary-light, #9F7AEA));
+    color: white;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* View toggle matching parent */
 .view-toggle {
     display: flex;
-    border: 1px solid var(--border, #2D2D3F);
+    gap: 5px;
+    background: var(--bg-main, #0A0A0F);
     border-radius: 8px;
-    overflow: hidden;
+    padding: 4px;
 }
 
 .view-btn {
-    padding: 8px 14px;
+    padding: 8px 12px;
     background: transparent;
-    color: var(--text-secondary, #A8A8B8);
     border: none;
+    color: var(--text-muted, #6B6B7B);
     cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease;
+    border-radius: 6px;
+    transition: all 0.3s;
     text-decoration: none;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .view-btn:hover {
-    background: rgba(107, 70, 193, 0.1);
-    color: var(--primary-light, #8B5CF6);
+    color: var(--text-white, #fff);
+    background: var(--bg-card, #16161F);
 }
 
 .view-btn.active {
     background: var(--primary, #6B46C1);
-    color: #fff;
+    color: white;
 }
 
 .view-btn + .view-btn {
-    border-left: 1px solid var(--border, #2D2D3F);
 }
 
 /* Filter box matching parent */
@@ -628,7 +675,8 @@ table tbody tr:last-child td {
 }
 
 .filter-box-header {
-    padding: 16px 24px;
+    background: var(--bg-main, #0A0A0F);
+    padding: 14px 20px;
     border-bottom: 1px solid var(--border, #2D2D3F);
     font-size: 14px;
     font-weight: 700;
@@ -636,7 +684,6 @@ table tbody tr:last-child td {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: linear-gradient(135deg, rgba(107, 70, 193, 0.05) 0%, transparent 100%);
 }
 
 .filter-box-header i {

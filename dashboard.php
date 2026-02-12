@@ -212,7 +212,7 @@ $csrf_token = generateCsrfToken();
                     <i class="fa-solid fa-video icon"></i> Film Room
                 </a>
                 <a href="?page=review_sessions" class="nav-link <?= $page === 'review_sessions' ? 'active' : '' ?>">
-                    <i class="fa-solid fa-chalkboard-teacher icon"></i> Review Sessions
+                    <i class="fa-solid fa-chalkboard-user icon"></i> Review Sessions
                 </a>
             <?php endif; ?>
         </nav>
@@ -394,7 +394,7 @@ overlay.addEventListener('click', () => {
         </div>
         <div class="modal-footer">
             <button class="btn btn-secondary" data-modal-close>Cancel</button>
-            <button class="btn btn-primary" id="hwSettingsSave"><i class="fa-solid fa-save"></i> Save Settings</button>
+            <button class="btn btn-primary" id="hwSettingsSave"><i class="fa-solid fa-floppy-disk"></i> Save Settings</button>
         </div>
     </div>
 </div>
@@ -544,7 +544,7 @@ overlay.addEventListener('click', () => {
 
         var hwBadgeClass = isHW ? '' : 'unavailable';
         var hwLabel = isHW ? 'GPU Detected' : 'Software Rendering';
-        var hwIcon = isHW ? 'fa-check-circle' : 'fa-exclamation-triangle';
+        var hwIcon = isHW ? 'fa-circle-check' : 'fa-triangle-exclamation';
 
         var html = '';
 

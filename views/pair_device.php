@@ -50,7 +50,7 @@ $statusColors = [
 <!-- How It Works -->
 <div class="card" style="margin-bottom:24px;">
     <div class="card-header">
-        <h3><i class="fa-solid fa-info-circle"></i> How It Works</h3>
+        <h3><i class="fa-solid fa-circle-info"></i> How It Works</h3>
     </div>
     <div class="card-body">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;text-align:center;">
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         var statusEl = document.getElementById('viewerStatusText');
 
                         if (status === 'paired' || status === 'active') {
-                            statusEl.innerHTML = '<i class="fa-solid fa-check-circle" style="color:var(--success);"></i> Controller connected!';
+                            statusEl.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Controller connected!';
                             statusEl.style.color = 'var(--success)';
                             setTimeout(function() {
                                 window.location.href = '?page=telestrate&role=viewer';
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     csrfToken: csrfToken,
                     onStatusChange: function(status) {
                         if (status === 'paired' || status === 'active') {
-                            statusEl.innerHTML = '<i class="fa-solid fa-check-circle"></i> Connected!';
+                            statusEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> Connected!';
                             statusEl.style.color = 'var(--success)';
                             setTimeout(function() {
                                 window.location.href = '?page=telestrate&role=controller';
