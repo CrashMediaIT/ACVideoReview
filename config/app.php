@@ -15,7 +15,7 @@ foreach (['/config/video_review.env', dirname(__DIR__) . '/.env', '/config/arcti
             $_val = trim($_val);
             if (preg_match('/^"(.*)"$/', $_val, $_m)) $_val = $_m[1];
             elseif (preg_match("/^'(.*)'$/", $_val, $_m)) $_val = $_m[1];
-            if (!getenv($_key)) {
+            if (preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $_key) && !getenv($_key)) {
                 putenv("$_key=$_val");
                 $_ENV[$_key] = $_val;
                 $_SERVER[$_key] = $_val;
@@ -67,11 +67,15 @@ function initSession(): void {
 
     $host = parse_url(APP_URL, PHP_URL_HOST);
     if ($host) {
-        $parts = explode('.', $host);
-        if (count($parts) > 2) {
-            $cookieDomain = '.' . implode('.', array_slice($parts, -2));
-        } else {
-            $cookieDomain = '.' . $host;
+        // Allow explicit override via env var for multi-level TLDs (e.g. .co.uk)
+        $cookieDomain = getenv('SESSION_COOKIE_DOMAIN') ?: null;
+        if (!$cookieDomain) {
+            $parts = explode('.', $host);
+            if (count($parts) > 2) {
+                $cookieDomain = '.' . implode('.', array_slice($parts, -2));
+            } else {
+                $cookieDomain = '.' . $host;
+            }
         }
 
         session_set_cookie_params([
