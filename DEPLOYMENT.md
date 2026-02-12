@@ -54,7 +54,47 @@ Video Review: https://review.arcticwolves.ca → /config/www/ACVideoReview
 
 Both applications share the **same database** (`arctic_wolves`). The Video Review tables are prefixed with `vr_` to avoid conflicts with the main application tables.
 
-Authentication flows through the main Arctic Wolves login system. Users are redirected to `arcticwolves.ca/login.php` if not authenticated.
+Authentication flows through the main Arctic Wolves login system. Users are redirected to `arcticwolves.ca/login.php` if not authenticated. The session cookie is scoped to `.arcticwolves.ca` so it is visible across both domains.
+
+### Cross-Subdomain Authentication
+
+For the login flow to work end-to-end, the **main Arctic Wolves application** must also be configured to:
+
+1. **Share session cookies across subdomains** — set the cookie domain to `.arcticwolves.ca` before calling `session_start()`.
+2. **Honour the `?redirect=` parameter** — after a successful login, redirect the user back to `review.arcticwolves.ca` instead of always going to `dashboard.php`.
+
+Two helper files are provided in `deployment/` for drop-in use in the Arctic_Wolves repo:
+
+| File | Purpose |
+|------|---------|
+| `arctic_wolves_session_boot.php` | Replaces bare `session_start()` calls with a cookie-domain-aware session bootstrap |
+| `arctic_wolves_redirect_helper.php` | Provides `safeRedirectAfterLogin()` — redirects to `?redirect=` URL if it is a trusted `*.arcticwolves.ca` host, otherwise falls back to `dashboard.php` |
+
+#### Installation (Arctic_Wolves repo)
+
+```bash
+# 1. Copy helpers into the Arctic_Wolves root
+cp deployment/arctic_wolves_session_boot.php   /config/www/Arctic_Wolves/session_boot.php
+cp deployment/arctic_wolves_redirect_helper.php /config/www/Arctic_Wolves/redirect_helper.php
+
+# 2. In login.php, process_login.php, index.php, dashboard.php — replace:
+#      session_start();
+#    with:
+#      require_once __DIR__ . '/session_boot.php';
+
+# 3. In login.php — near the top (after session_start replacement), add:
+#      require_once __DIR__ . '/redirect_helper.php';
+#      captureRedirectParam();
+#    And replace every:
+#      header("Location: dashboard.php");
+#      exit();
+#    with:
+#      safeRedirectAfterLogin();
+
+# 4. In process_login.php — replace the same dashboard redirect:
+#      require_once __DIR__ . '/redirect_helper.php';
+#      safeRedirectAfterLogin();
+```
 
 ### Directory Structure
 ```
@@ -499,7 +539,25 @@ try {
 docker exec nginx cat /config/www/ACVideoReview/video_review.env
 ```
 
-### Session/Auth Issues
+### Session/Auth Issues — Redirects Back to Main Dashboard After Login
+The most common cause is the main Arctic Wolves app not sharing session cookies or not redirecting back after login.
+```bash
+# 1. Verify the session cookie domain is set to .arcticwolves.ca
+#    In the browser, after logging in at arcticwolves.ca, check DevTools → Application → Cookies.
+#    The PHPSESSID cookie should have Domain ".arcticwolves.ca", not "arcticwolves.ca".
+#    Fix: install deployment/arctic_wolves_session_boot.php in the main app (see above).
+
+# 2. Verify the redirect parameter is being honoured
+#    Visit: https://arcticwolves.ca/login.php?redirect=https://review.arcticwolves.ca
+#    After login you should be sent to review.arcticwolves.ca, NOT dashboard.php.
+#    Fix: install deployment/arctic_wolves_redirect_helper.php in the main app (see above).
+
+# 3. Verify session variable mapping
+#    The main app stores the user role as $_SESSION['user_role'].
+#    ACVideoReview normalises this to $_SESSION['role'] automatically in initSession().
+```
+
+### Session/Auth Issues — General
 ```bash
 # Check PHP session directory
 docker exec nginx php -i | grep session.save_path

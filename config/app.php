@@ -89,4 +89,10 @@ function initSession(): void {
     }
 
     session_start();
+
+    // Normalize session variables set by the main Arctic Wolves app.
+    // The main app stores the role as 'user_role'; this app expects 'role'.
+    if (isset($_SESSION['user_role']) && !isset($_SESSION['role'])) {
+        $_SESSION['role'] = $_SESSION['user_role'];
+    }
 }
