@@ -53,45 +53,61 @@ $csrf_token = generateCsrfToken();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* Layout */
-        body { display: flex; min-height: 100vh; background: var(--bg-main); color: var(--text-white); font-family: var(--font-family); }
+        /* Layout — matches Arctic_Wolves/dashboard.php */
+        body { margin: 0; display: flex; min-height: 100vh; background: var(--bg-main); color: var(--text-white); font-family: var(--font-family); overflow-x: hidden; }
 
-        /* Sidebar */
+        /* Sidebar — matches parent */
         .sidebar {
-            width: 260px; min-height: 100vh; background: var(--bg-secondary);
-            border-right: 1px solid var(--border); display: flex; flex-direction: column;
-            position: fixed; top: 0; left: 0; z-index: 100; transition: transform var(--transition);
+            width: 280px; background: var(--sidebar); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; padding: 25px; overflow-y: auto;
+            position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; transition: transform var(--transition);
         }
-        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
-        .sidebar-header img { width: 36px; height: 36px; }
-        .sidebar-header-text { display: flex; flex-direction: column; }
-        .sidebar-header h2 { font-size: 16px; font-weight: 600; white-space: nowrap; line-height: 1.2; }
-        .sidebar-header h2 .header-separator { color: var(--primary-light); }
-        .sidebar-subheader { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; line-height: 1.4; }
-        .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
-        .sidebar-nav a {
-            display: flex; align-items: center; gap: 12px; padding: 12px 20px;
-            color: var(--text-secondary); text-decoration: none; font-size: 14px;
-            transition: all var(--transition); border-left: 3px solid transparent;
+        .brand {
+            font-size: 22px; font-weight: 900; margin-bottom: 40px; letter-spacing: -1px;
+            display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;
         }
-        .sidebar-nav a:hover, .sidebar-nav a.active { color: var(--text-white); background: rgba(107,70,193,0.1); border-left-color: var(--primary); }
-        .sidebar-nav a i { width: 20px; text-align: center; font-size: 16px; }
-        .sidebar-nav .nav-divider { height: 1px; background: var(--border); margin: 8px 20px; }
-        .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); }
-        .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: var(--text-muted); text-decoration: none; font-size: 13px; }
-        .sidebar-footer a:hover { color: var(--text-white); }
+        .brand span { color: var(--primary); }
+        .brand img { height: 35px; width: auto; }
+        .nav-group { margin-bottom: 25px; }
+        .nav-label { font-size: 10px; text-transform: uppercase; color: #475569; font-weight: 800; margin-bottom: 12px; display: block; letter-spacing: 1.5px; }
+        .nav-menu { list-style: none; padding: 0; margin: 0; }
+        .nav-link {
+            display: flex; align-items: center; gap: 14px; padding: 10px 15px;
+            color: var(--text); text-decoration: none; border-radius: 8px;
+            font-size: 13px; font-weight: 600; transition: 0.2s; margin-bottom: 2px; cursor: pointer;
+        }
+        .nav-link i { width: 18px; text-align: center; color: #fff; }
+        .nav-link:hover, .nav-link.active { background: rgba(107,70,193,0.1); color: var(--primary-light); }
+        .sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
+        .sidebar-footer .nav-link { margin-bottom: 2px; }
+        .sidebar-footer .user-badge {
+            display: flex; align-items: center; gap: 12px; padding: 10px;
+            border-top: 1px solid #1e293b; margin-top: 10px;
+        }
+        .sidebar-footer .user-badge .avatar {
+            width: 32px; height: 32px; border-radius: 50%; background: var(--primary);
+            display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px;
+            overflow: hidden; flex-shrink: 0;
+        }
+        .sidebar-footer .user-badge .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .sidebar-footer .user-badge .user-meta { font-size: 12px; }
+        .sidebar-footer .user-badge .user-meta strong { display: block; color: #fff; }
+        .sidebar-footer .user-badge .user-meta span { color: var(--text); text-transform: capitalize; }
+        .sidebar::-webkit-scrollbar { width: 8px; }
+        .sidebar::-webkit-scrollbar-track { background: var(--bg-main); }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        .sidebar::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
 
-        /* Top bar */
-        .main-wrapper { flex: 1; margin-left: 260px; display: flex; flex-direction: column; }
+        /* Main Content — matches parent */
+        .main-wrapper { flex: 1; margin-left: 280px; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         .top-bar {
-            height: 60px; background: var(--bg-secondary); border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
-            position: sticky; top: 0; z-index: 90;
+            display: flex; justify-content: flex-end; align-items: center;
+            padding: 20px 40px; border-bottom: 1px solid var(--border); background: var(--sidebar);
         }
-        .top-bar-left { display: flex; align-items: center; gap: 12px; }
+        .top-bar-left { display: flex; align-items: center; gap: 12px; margin-right: auto; }
         .hamburger { display: none; background: none; border: none; color: var(--text-white); font-size: 20px; cursor: pointer; }
         .top-bar-right { display: flex; align-items: center; gap: 16px; }
         .notification-bell { position: relative; color: var(--text-secondary); font-size: 18px; cursor: pointer; }
@@ -109,13 +125,22 @@ $csrf_token = generateCsrfToken();
         .user-info .name { font-size: 14px; font-weight: 500; }
         .user-info .role { font-size: 11px; color: var(--text-muted); text-transform: capitalize; }
 
+        /* Top bar icon button */
+        .top-bar-icon-btn {
+            background: none; border: 1px solid var(--border); color: var(--text-secondary);
+            width: 36px; height: 36px; border-radius: var(--radius-md); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 15px;
+            transition: all 0.2s ease;
+        }
+        .top-bar-icon-btn:hover { background: rgba(107,70,193,0.12); color: var(--text-white); border-color: var(--primary); }
+
         /* Content */
-        .content { flex: 1; padding: 24px; }
+        .content { flex: 1; padding: 24px 40px; overflow-y: auto; }
 
         /* Mobile bottom nav */
         .bottom-nav {
             display: none; position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--bg-secondary); border-top: 1px solid var(--border);
+            background: var(--sidebar); border-top: 1px solid var(--border);
             z-index: 100; padding: 6px 0; padding-bottom: env(safe-area-inset-bottom);
         }
         .bottom-nav-inner { display: flex; justify-content: space-around; }
@@ -141,15 +166,6 @@ $csrf_token = generateCsrfToken();
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99;
         }
         .sidebar-overlay.active { display: block; }
-
-        /* Top bar icon button */
-        .top-bar-icon-btn {
-            background: none; border: 1px solid var(--border); color: var(--text-secondary);
-            width: 36px; height: 36px; border-radius: var(--radius-md); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 15px;
-            transition: all 0.2s ease;
-        }
-        .top-bar-icon-btn:hover { background: rgba(107,70,193,0.12); color: var(--text-white); border-color: var(--primary); }
     </style>
 </head>
 <body>
@@ -159,57 +175,77 @@ $csrf_token = generateCsrfToken();
 
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <img src="css/arctic-wolves-logo.svg" alt="Arctic Wolves" width="36" height="36">
-        <div class="sidebar-header-text">
-            <h2 aria-label="Arctic Wolves">Arctic<span class="header-separator" aria-hidden="true">_</span>Wolves</h2>
-            <span class="sidebar-subheader">Game Plan</span>
-        </div>
-    </div>
+    <a href="?page=home" class="brand">
+        <img src="https://images.crashmedia.ca/images/2026/01/21/ArcticWolves.png" alt="Logo">
+        ARCTIC <span>WOLVES</span>
+    </a>
 
-    <nav class="sidebar-nav">
-        <?php if (!$isCoach): // Athlete navigation ?>
-            <a href="?page=home" class="<?= $page === 'home' ? 'active' : '' ?>">
-                <i class="fas fa-home"></i> Dashboard
-            </a>
-            <a href="?page=video_review" class="<?= $page === 'video_review' ? 'active' : '' ?>">
-                <i class="fas fa-film"></i> Video Review
-            </a>
-            <a href="?page=my_clips" class="<?= $page === 'my_clips' ? 'active' : '' ?>">
-                <i class="fas fa-cut"></i> My Clips
-            </a>
-        <?php else: // Coach / Admin navigation ?>
-            <a href="?page=home" class="<?= $page === 'home' ? 'active' : '' ?>">
-                <i class="fas fa-home"></i> Dashboard
-            </a>
-            <a href="?page=calendar" class="<?= $page === 'calendar' ? 'active' : '' ?>">
-                <i class="fas fa-calendar-alt"></i> Calendar
-            </a>
-            <a href="?page=video_review" class="<?= $page === 'video_review' ? 'active' : '' ?>">
-                <i class="fas fa-film"></i> Video Review
-            </a>
-            <a href="?page=game_plan" class="<?= $page === 'game_plan' ? 'active' : '' ?>">
-                <i class="fas fa-chess"></i> Game Plan
-            </a>
-            <a href="?page=film_room" class="<?= $page === 'film_room' ? 'active' : '' ?>">
-                <i class="fas fa-video"></i> Film Room
-            </a>
-            <a href="?page=review_sessions" class="<?= $page === 'review_sessions' ? 'active' : '' ?>">
-                <i class="fas fa-chalkboard-teacher"></i> Review Sessions
-            </a>
-            <?php if ($isAdmin): ?>
-                <div class="nav-divider"></div>
-                <a href="?page=permissions" class="<?= $page === 'permissions' ? 'active' : '' ?>">
-                    <i class="fas fa-user-shield"></i> Permissions
+    <!-- Main Menu -->
+    <div class="nav-group">
+        <span class="nav-label">Game Plan</span>
+        <nav class="nav-menu">
+            <?php if (!$isCoach): // Athlete navigation ?>
+                <a href="?page=home" class="nav-link <?= $page === 'home' ? 'active' : '' ?>">
+                    <i class="fa-solid fa-house icon"></i> Dashboard
+                </a>
+                <a href="?page=video_review" class="nav-link <?= $page === 'video_review' ? 'active' : '' ?>">
+                    <i class="fa-solid fa-film icon"></i> Video Review
+                </a>
+                <a href="?page=my_clips" class="nav-link <?= $page === 'my_clips' ? 'active' : '' ?>">
+                    <i class="fa-solid fa-scissors icon"></i> My Clips
+                </a>
+            <?php else: // Coach / Admin navigation ?>
+                <a href="?page=home" class="nav-link <?= $page === 'home' ? 'active' : '' ?>">
+                    <i class="fa-solid fa-house icon"></i> Dashboard
+                </a>
+                <a href="?page=calendar" class="nav-link <?= $page === 'calendar' ? 'active' : '' ?>">
+                    <i class="fa-solid fa-calendar icon"></i> Calendar
+                </a>
+                <a href="?page=video_review" class="nav-link <?= $page === 'video_review' ? 'active' : '' ?>">
+                    <i class="fa-solid fa-film icon"></i> Video Review
+                </a>
+                <a href="?page=game_plan" class="nav-link <?= $page === 'game_plan' ? 'active' : '' ?>">
+                    <i class="fa-solid fa-chess-board icon"></i> Game Plan
+                </a>
+                <a href="?page=film_room" class="nav-link <?= $page === 'film_room' ? 'active' : '' ?>">
+                    <i class="fa-solid fa-video icon"></i> Film Room
+                </a>
+                <a href="?page=review_sessions" class="nav-link <?= $page === 'review_sessions' ? 'active' : '' ?>">
+                    <i class="fa-solid fa-chalkboard-teacher icon"></i> Review Sessions
                 </a>
             <?php endif; ?>
-        <?php endif; ?>
-    </nav>
+        </nav>
+    </div>
+
+    <?php if ($isAdmin): ?>
+    <!-- Administration -->
+    <div class="nav-group">
+        <span class="nav-label">Administration</span>
+        <nav class="nav-menu">
+            <a href="?page=permissions" class="nav-link <?= $page === 'permissions' ? 'active' : '' ?>">
+                <i class="fa-solid fa-user-shield icon"></i> Permissions
+            </a>
+        </nav>
+    </div>
+    <?php endif; ?>
 
     <div class="sidebar-footer">
-        <a href="<?= htmlspecialchars(MAIN_APP_URL) ?>">
-            <i class="fas fa-arrow-left"></i> Back to Main App
+        <a href="<?= htmlspecialchars(MAIN_APP_URL) ?>" class="nav-link">
+            <i class="fa-solid fa-arrow-left"></i> Back to Main App
         </a>
+        <div class="user-badge">
+            <div class="avatar">
+                <?php if ($user_avatar): ?>
+                    <img src="<?= htmlspecialchars($user_avatar) ?>" alt="Avatar">
+                <?php else: ?>
+                    <?= strtoupper(substr($user_name, 0, 1)) ?>
+                <?php endif; ?>
+            </div>
+            <div class="user-meta">
+                <strong><?= htmlspecialchars($user_name) ?></strong>
+                <span><?= htmlspecialchars(str_replace('_', ' ', $user_role)) ?></span>
+            </div>
+        </div>
     </div>
 </aside>
 
@@ -222,32 +258,16 @@ $csrf_token = generateCsrfToken();
             <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
                 <i class="fas fa-bars"></i>
             </button>
-            <span style="font-size:14px;color:var(--text-secondary);">
-                <?= htmlspecialchars(APP_NAME) ?>
-            </span>
         </div>
         <div class="top-bar-right">
             <button class="top-bar-icon-btn" id="hwSettingsBtn" title="Hardware Acceleration Settings" aria-label="Hardware acceleration settings">
-                <i class="fas fa-microchip"></i>
+                <i class="fa-solid fa-microchip"></i>
             </button>
             <div class="notification-bell" title="Notifications">
-                <i class="fas fa-bell"></i>
+                <i class="fa-solid fa-bell"></i>
                 <?php if ($unreadNotifications > 0): ?>
                     <span class="badge"><?= $unreadNotifications ?></span>
                 <?php endif; ?>
-            </div>
-            <div class="user-info">
-                <div class="avatar">
-                    <?php if ($user_avatar): ?>
-                        <img src="<?= htmlspecialchars($user_avatar) ?>" alt="Avatar">
-                    <?php else: ?>
-                        <?= strtoupper(substr($user_name, 0, 1)) ?>
-                    <?php endif; ?>
-                </div>
-                <div>
-                    <div class="name"><?= htmlspecialchars($user_name) ?></div>
-                    <div class="role"><?= htmlspecialchars(str_replace('_', ' ', $user_role)) ?></div>
-                </div>
             </div>
         </div>
     </header>
@@ -307,23 +327,23 @@ $csrf_token = generateCsrfToken();
 <nav class="bottom-nav">
     <div class="bottom-nav-inner">
         <a href="?page=home" class="<?= $page === 'home' ? 'active' : '' ?>">
-            <i class="fas fa-home"></i> Home
+            <i class="fa-solid fa-house"></i> Home
         </a>
         <?php if ($isCoach): ?>
             <a href="?page=calendar" class="<?= $page === 'calendar' ? 'active' : '' ?>">
-                <i class="fas fa-calendar-alt"></i> Calendar
+                <i class="fa-solid fa-calendar"></i> Calendar
             </a>
         <?php endif; ?>
         <a href="?page=video_review" class="<?= $page === 'video_review' ? 'active' : '' ?>">
-            <i class="fas fa-film"></i> Video
+            <i class="fa-solid fa-film"></i> Video
         </a>
         <?php if ($isCoach): ?>
             <a href="?page=game_plan" class="<?= $page === 'game_plan' ? 'active' : '' ?>">
-                <i class="fas fa-chess"></i> Plan
+                <i class="fa-solid fa-chess-board"></i> Plan
             </a>
         <?php else: ?>
             <a href="?page=my_clips" class="<?= $page === 'my_clips' ? 'active' : '' ?>">
-                <i class="fas fa-cut"></i> Clips
+                <i class="fa-solid fa-scissors"></i> Clips
             </a>
         <?php endif; ?>
     </div>
