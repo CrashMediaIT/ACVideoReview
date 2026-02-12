@@ -4,9 +4,9 @@
  * POST endpoint for importing external calendars (TeamLinkt, iCal, CSV)
  * Called from views/calendar.php import modal
  */
-session_start();
-
 require_once __DIR__ . '/../config/app.php';
+initSession();
+
 require_once __DIR__ . '/../db_config.php';
 require_once __DIR__ . '/../security.php';
 
