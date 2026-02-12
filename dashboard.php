@@ -162,7 +162,7 @@ $csrf_token = generateCsrfToken();
     <div class="sidebar-header">
         <img src="css/arctic-wolves-logo.svg" alt="Arctic Wolves" width="36" height="36">
         <div class="sidebar-header-text">
-            <h2>Arctic<span class="header-separator">_</span>Wolves</h2>
+            <h2 aria-label="Arctic Wolves">Arctic<span class="header-separator" aria-hidden="true">_</span>Wolves</h2>
             <span class="sidebar-subheader">Game Plan</span>
         </div>
     </div>
