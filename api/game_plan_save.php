@@ -108,6 +108,10 @@ try {
     if (isset($_POST['lines']) && is_array($_POST['lines'])) {
         $plan_target_id = $plan_id ?: $pdo->lastInsertId();
 
+        // Whitelist: must match the ENUM in vr_line_assignments.line_type
+        $valid_line_types = ['forward', 'defense', 'power_play', 'penalty_kill', 'overtime'];
+        $valid_positions  = ['LW', 'C', 'RW', 'LD', 'RD', 'G'];
+
         // Clear existing assignments
         $stmt = $pdo->prepare("DELETE FROM vr_line_assignments WHERE game_plan_id = :pid");
         $stmt->execute([':pid' => $plan_target_id]);
@@ -119,16 +123,20 @@ try {
 
         foreach ($_POST['lines'] as $line_type => $numbers) {
             if (!is_array($numbers)) continue;
+            if (!in_array($line_type, $valid_line_types, true)) continue;
             foreach ($numbers as $line_number => $positions) {
                 if (!is_array($positions)) continue;
+                $line_number = (int)$line_number;
+                if ($line_number < 1 || $line_number > 10) continue;
                 foreach ($positions as $position => $athlete_id) {
+                    if (!in_array($position, $valid_positions, true)) continue;
                     $athlete_id = (int)$athlete_id;
                     if ($athlete_id <= 0) continue;
                     $line_stmt->execute([
                         ':pid'  => $plan_target_id,
-                        ':type' => sanitizeInput((string)$line_type),
-                        ':num'  => (int)$line_number,
-                        ':pos'  => sanitizeInput((string)$position),
+                        ':type' => $line_type,
+                        ':num'  => $line_number,
+                        ':pos'  => $position,
                         ':ath'  => $athlete_id,
                     ]);
                 }
