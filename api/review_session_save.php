@@ -1,8 +1,8 @@
 <?php
 // ACVideoReview API - Review Session Save
-session_start();
-
 require_once __DIR__ . '/../config/app.php';
+initSession();
+
 require_once __DIR__ . '/../db_config.php';
 require_once __DIR__ . '/../security.php';
 

@@ -5,7 +5,8 @@
 // This wizard helps configure the system for first-time setup
 // It should be removed or restricted in production
 
-session_start();
+require_once __DIR__ . '/config/app.php';
+initSession();
 
 // =========================================================
 // AUTOMATIC PERMISSION SETUP FOR DOCKER ENVIRONMENTS

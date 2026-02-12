@@ -1,8 +1,8 @@
 <?php
 // ACVideoReview API - Mark Notification as Read
-session_start();
-
 require_once __DIR__ . '/../config/app.php';
+initSession();
+
 require_once __DIR__ . '/../db_config.php';
 require_once __DIR__ . '/../security.php';
 

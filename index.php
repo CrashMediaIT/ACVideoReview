@@ -1,8 +1,8 @@
 <?php
 // ACVideoReview - Entry Point / Login Check
-session_start();
-
 require_once __DIR__ . '/config/app.php';
+initSession();
+
 require_once __DIR__ . '/db_config.php';
 
 // If user is logged in, go to dashboard

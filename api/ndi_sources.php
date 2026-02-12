@@ -1,9 +1,9 @@
 <?php
 // ACVideoReview API - NDI Camera Sources
 // Fetches available NDI cameras from the shared Arctic Wolves database (ndi_cameras table)
-session_start();
-
 require_once __DIR__ . '/../config/app.php';
+initSession();
+
 require_once __DIR__ . '/../db_config.php';
 require_once __DIR__ . '/../security.php';
 
