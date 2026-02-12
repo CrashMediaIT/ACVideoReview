@@ -138,6 +138,15 @@ $csrf_token = generateCsrfToken();
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99;
         }
         .sidebar-overlay.active { display: block; }
+
+        /* Top bar icon button */
+        .top-bar-icon-btn {
+            background: none; border: 1px solid var(--border); color: var(--text-secondary);
+            width: 36px; height: 36px; border-radius: var(--radius-md); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 15px;
+            transition: all 0.2s ease;
+        }
+        .top-bar-icon-btn:hover { background: rgba(107,70,193,0.12); color: var(--text-white); border-color: var(--primary); }
     </style>
 </head>
 <body>
@@ -212,6 +221,9 @@ $csrf_token = generateCsrfToken();
             </span>
         </div>
         <div class="top-bar-right">
+            <button class="top-bar-icon-btn" id="hwSettingsBtn" title="Hardware Acceleration Settings" aria-label="Hardware acceleration settings">
+                <i class="fas fa-microchip"></i>
+            </button>
             <div class="notification-bell" title="Notifications">
                 <i class="fas fa-bell"></i>
                 <?php if ($unreadNotifications > 0): ?>
@@ -337,6 +349,409 @@ overlay.addEventListener('click', () => {
     sidebar.classList.remove('open');
     overlay.classList.remove('active');
 });
+</script>
+
+<!-- Hardware Acceleration Settings Modal -->
+<div class="modal-overlay" id="hwSettingsModal">
+    <div class="modal" style="max-width:620px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-microchip" style="color:var(--primary-light);margin-right:8px;"></i> Hardware Acceleration Settings</h3>
+            <button class="modal-close" data-modal-close aria-label="Close"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" id="hwSettingsBody">
+            <!-- Populated by JS -->
+            <div style="text-align:center;padding:32px;">
+                <div class="spinner" style="margin:0 auto 12px;"></div>
+                <p style="color:var(--text-muted);font-size:0.85rem;">Detecting hardware capabilities…</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-modal-close>Cancel</button>
+            <button class="btn btn-primary" id="hwSettingsSave"><i class="fas fa-save"></i> Save Settings</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    var STORAGE_KEY = 'vr_hw_accel_settings';
+
+    /* ── Default settings ─────────────────────────────────── */
+    var defaults = {
+        decodeMode: 'auto',       // auto | prefer-hardware | prefer-software
+        renderMode: 'gpu',        // gpu | cpu
+        gpuDevice: '',            // WebGPU adapter name or empty for default
+        deinterlace: true,
+        powerPreference: 'high-performance', // high-performance | low-power
+        frameDropThreshold: 5,    // max % dropped frames before switching to SW
+        videoSuperResolution: false,
+        preferredCodec: 'auto'    // auto | h264 | h265 | vp9 | av1
+    };
+
+    /* ── Load / save ──────────────────────────────────────── */
+    function loadSettings() {
+        try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                var saved = JSON.parse(raw);
+                var merged = {};
+                for (var k in defaults) {
+                    if (defaults.hasOwnProperty(k)) {
+                        merged[k] = saved.hasOwnProperty(k) ? saved[k] : defaults[k];
+                    }
+                }
+                return merged;
+            }
+        } catch (e) { /* ignore */ }
+        return JSON.parse(JSON.stringify(defaults));
+    }
+
+    function saveSettings(settings) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+        } catch (e) { /* ignore */ }
+    }
+
+    /* ── Capability detection ─────────────────────────────── */
+    function detectCapabilities(callback) {
+        var caps = {
+            webCodecs: typeof VideoDecoder !== 'undefined',
+            webGPU: 'gpu' in navigator,
+            requestVideoFrame: typeof HTMLVideoElement !== 'undefined' &&
+                'requestVideoFrameCallback' in HTMLVideoElement.prototype,
+            mediaCapabilities: 'mediaCapabilities' in navigator,
+            gpuAdapters: [],
+            supportedCodecs: [],
+            renderer: '',
+            vendor: ''
+        };
+
+        // GL renderer info
+        try {
+            var c = document.createElement('canvas');
+            var gl = c.getContext('webgl2') || c.getContext('webgl');
+            if (gl) {
+                var dbg = gl.getExtension('WEBGL_debug_renderer_info');
+                if (dbg) {
+                    caps.renderer = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '';
+                    caps.vendor = gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || '';
+                }
+            }
+        } catch (e) { /* ignore */ }
+
+        // Check codec support via MediaCapabilities
+        var codecTests = [
+            { label: 'H.264 (AVC)', codec: 'avc1.640033', type: 'video/mp4; codecs="avc1.640033"' },
+            { label: 'H.265 (HEVC)', codec: 'hev1.1.6.L153.B0', type: 'video/mp4; codecs="hev1.1.6.L153.B0"' },
+            { label: 'VP9', codec: 'vp09.00.10.08', type: 'video/webm; codecs="vp09.00.10.08"' },
+            { label: 'AV1', codec: 'av01.0.08M.08', type: 'video/mp4; codecs="av01.0.08M.08"' }
+        ];
+
+        var pending = codecTests.length;
+        var done = false;
+
+        function finish() {
+            if (done) return;
+            done = true;
+            callback(caps);
+        }
+
+        if (!caps.mediaCapabilities) {
+            // Fallback: just check canPlayType
+            codecTests.forEach(function(ct) {
+                var v = document.createElement('video');
+                var result = v.canPlayType(ct.type);
+                if (result === 'probably' || result === 'maybe') {
+                    caps.supportedCodecs.push({ label: ct.label, codec: ct.codec, hwAccel: 'unknown' });
+                }
+            });
+            finish();
+            return;
+        }
+
+        codecTests.forEach(function(ct) {
+            navigator.mediaCapabilities.decodingInfo({
+                type: 'media-source',
+                video: {
+                    contentType: ct.type,
+                    width: 1920, height: 1080, bitrate: 20000000, framerate: 60
+                }
+            }).then(function(info) {
+                if (info.supported) {
+                    caps.supportedCodecs.push({
+                        label: ct.label,
+                        codec: ct.codec,
+                        hwAccel: info.powerEfficient ? 'yes' : 'software',
+                        smooth: info.smooth
+                    });
+                }
+            }).catch(function() {
+                // Fallback to canPlayType
+                var v = document.createElement('video');
+                if (v.canPlayType(ct.type)) {
+                    caps.supportedCodecs.push({ label: ct.label, codec: ct.codec, hwAccel: 'unknown' });
+                }
+            }).finally(function() {
+                pending--;
+                if (pending <= 0) finish();
+            });
+        });
+
+        // Timeout
+        setTimeout(finish, 3000);
+    }
+
+    /* ── Render the settings panel ────────────────────────── */
+    function renderSettings(container, caps, settings) {
+        var isHW = caps.renderer && (
+            /nvidia|geforce|rtx|gtx/i.test(caps.renderer) ||
+            /radeon|amd/i.test(caps.renderer) ||
+            /intel.*iris|intel.*uhd|intel.*hd/i.test(caps.renderer) ||
+            /apple.*gpu|apple.*m[0-9]/i.test(caps.renderer)
+        );
+
+        var deviceName = caps.renderer || 'Unknown GPU';
+        var vendorName = caps.vendor || '';
+
+        var hwBadgeClass = isHW ? '' : 'unavailable';
+        var hwLabel = isHW ? 'GPU Detected' : 'Software Rendering';
+        var hwIcon = isHW ? 'fa-check-circle' : 'fa-exclamation-triangle';
+
+        var html = '';
+
+        /* ── Device info ── */
+        html += '<div class="card" style="margin-bottom:16px;">';
+        html += '<div class="card-header"><h4 style="font-size:0.9rem;"><i class="fas fa-desktop" style="color:var(--primary-light);margin-right:8px;"></i>Detected Device</h4>';
+        html += '<span class="hw-accel-badge ' + hwBadgeClass + '"><i class="fas ' + hwIcon + '"></i> ' + escHtml(hwLabel) + '</span></div>';
+        html += '<div class="card-body" style="padding:14px 18px;">';
+        html += '<div class="analysis-metric"><span class="metric-label">GPU</span><span class="metric-value">' + escHtml(deviceName) + '</span></div>';
+        if (vendorName) {
+            html += '<div class="analysis-metric"><span class="metric-label">Vendor</span><span class="metric-value">' + escHtml(vendorName) + '</span></div>';
+        }
+        html += '<div class="analysis-metric"><span class="metric-label">WebCodecs API</span><span class="metric-value">' + (caps.webCodecs ? '<span style="color:var(--success);">Available</span>' : '<span style="color:var(--text-muted);">Not available</span>') + '</span></div>';
+        html += '<div class="analysis-metric"><span class="metric-label">WebGPU</span><span class="metric-value">' + (caps.webGPU ? '<span style="color:var(--success);">Available</span>' : '<span style="color:var(--text-muted);">Not available</span>') + '</span></div>';
+        html += '<div class="analysis-metric"><span class="metric-label">Frame Callback API</span><span class="metric-value">' + (caps.requestVideoFrame ? '<span style="color:var(--success);">Available</span>' : '<span style="color:var(--text-muted);">Not available</span>') + '</span></div>';
+        html += '</div></div>';
+
+        /* ── Decode mode ── */
+        html += '<div style="margin-bottom:16px;">';
+        html += '<label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Video Decode Mode</label>';
+        html += buildRadioGroup('decodeMode', [
+            { value: 'auto', label: 'Auto', desc: 'Let the browser choose the best decoder' },
+            { value: 'prefer-hardware', label: 'Prefer Hardware', desc: 'Use GPU decoding when available (lower CPU)' },
+            { value: 'prefer-software', label: 'Prefer Software', desc: 'Force CPU decoding (more compatible)' }
+        ], settings.decodeMode);
+        html += '</div>';
+
+        /* ── Render mode ── */
+        html += '<div style="margin-bottom:16px;">';
+        html += '<label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Render Mode</label>';
+        html += buildRadioGroup('renderMode', [
+            { value: 'gpu', label: 'GPU Compositing', desc: 'Hardware-accelerated rendering (recommended)' },
+            { value: 'cpu', label: 'CPU Rendering', desc: 'Software rendering (use if video glitches occur)' }
+        ], settings.renderMode);
+        html += '</div>';
+
+        /* ── Power preference ── */
+        html += '<div style="margin-bottom:16px;">';
+        html += '<label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Power Preference</label>';
+        html += buildRadioGroup('powerPreference', [
+            { value: 'high-performance', label: 'High Performance', desc: 'Use discrete GPU for best quality' },
+            { value: 'low-power', label: 'Low Power', desc: 'Use integrated GPU to save battery' }
+        ], settings.powerPreference);
+        html += '</div>';
+
+        /* ── Preferred codec ── */
+        html += '<div style="margin-bottom:16px;">';
+        html += '<label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Preferred Codec</label>';
+        html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;">';
+        var codecOpts = [{ value: 'auto', label: 'Auto', desc: 'Best available' }];
+        caps.supportedCodecs.forEach(function(c) {
+            var val = c.codec.split('.')[0].replace('avc1', 'h264').replace('hev1', 'h265').replace('vp09', 'vp9').replace('av01', 'av1');
+            var accelTag = c.hwAccel === 'yes' ? ' <span class="hw-accel-badge" style="font-size:0.6rem;padding:1px 5px;"><i class="fas fa-bolt"></i> HW</span>'
+                         : c.hwAccel === 'software' ? ' <span class="hw-accel-badge unavailable" style="font-size:0.6rem;padding:1px 5px;">SW</span>' : '';
+            codecOpts.push({ value: val, label: c.label + accelTag, desc: c.smooth ? 'Smooth playback' : '' });
+        });
+        codecOpts.forEach(function(opt) {
+            var active = settings.preferredCodec === opt.value ? ' active' : '';
+            html += '<div class="codec-card' + active + '" data-setting="preferredCodec" data-value="' + escAttr(opt.value) + '">';
+            html += '<div class="codec-icon"><i class="fas fa-film"></i></div>';
+            html += '<div class="codec-info"><div class="codec-name">' + opt.label + '</div>';
+            if (opt.desc) html += '<div class="codec-desc">' + escHtml(opt.desc) + '</div>';
+            html += '</div></div>';
+        });
+        html += '</div></div>';
+
+        /* ── Toggles ── */
+        html += '<div style="margin-bottom:16px;">';
+        html += '<label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Advanced Options</label>';
+        html += buildToggle('deinterlace', 'Deinterlace Video', 'Apply deinterlacing for interlaced sources (MTS/M2TS)', settings.deinterlace);
+        html += buildToggle('videoSuperResolution', 'Video Super Resolution', 'Use GPU upscaling for low-res footage (experimental)', settings.videoSuperResolution);
+        html += '</div>';
+
+        /* ── Drop threshold ── */
+        html += '<div style="margin-bottom:8px;">';
+        html += '<label style="display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Frame Drop Threshold</label>';
+        html += '<div style="display:flex;align-items:center;gap:12px;">';
+        html += '<input type="range" class="form-input" id="hwFrameDropThreshold" min="1" max="20" value="' + settings.frameDropThreshold + '" style="flex:1;padding:0;height:6px;-webkit-appearance:none;appearance:none;background:var(--border);border-radius:3px;border:none;cursor:pointer;">';
+        html += '<span id="hwFrameDropValue" style="font-size:0.85rem;font-weight:600;color:var(--text-white);min-width:32px;text-align:right;">' + settings.frameDropThreshold + '%</span>';
+        html += '</div>';
+        html += '<p style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">Auto-switch to software decode if dropped frames exceed this percentage.</p>';
+        html += '</div>';
+
+        container.innerHTML = html;
+
+        /* ── Wire up interactions ── */
+        // Radio groups
+        container.querySelectorAll('[data-radio-name]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var name = btn.getAttribute('data-radio-name');
+                container.querySelectorAll('[data-radio-name="' + name + '"]').forEach(function(b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+            });
+        });
+
+        // Codec cards
+        container.querySelectorAll('.codec-card[data-setting]').forEach(function(card) {
+            card.addEventListener('click', function() {
+                container.querySelectorAll('.codec-card[data-setting="preferredCodec"]').forEach(function(c) { c.classList.remove('active'); });
+                card.classList.add('active');
+            });
+        });
+
+        // Toggles
+        container.querySelectorAll('.hw-toggle').forEach(function(toggle) {
+            toggle.addEventListener('click', function() {
+                toggle.classList.toggle('active');
+            });
+        });
+
+        // Range slider
+        var slider = document.getElementById('hwFrameDropThreshold');
+        var sliderVal = document.getElementById('hwFrameDropValue');
+        if (slider && sliderVal) {
+            slider.addEventListener('input', function() {
+                sliderVal.textContent = slider.value + '%';
+            });
+        }
+    }
+
+    /* ── Collect settings from UI ─────────────────────────── */
+    function collectSettings(container) {
+        var s = {};
+        ['decodeMode', 'renderMode', 'powerPreference'].forEach(function(name) {
+            var active = container.querySelector('[data-radio-name="' + name + '"].active');
+            s[name] = active ? active.getAttribute('data-radio-value') : defaults[name];
+        });
+
+        var codecCard = container.querySelector('.codec-card[data-setting="preferredCodec"].active');
+        s.preferredCodec = codecCard ? codecCard.getAttribute('data-value') : 'auto';
+
+        s.deinterlace = !!container.querySelector('.hw-toggle[data-toggle="deinterlace"].active');
+        s.videoSuperResolution = !!container.querySelector('.hw-toggle[data-toggle="videoSuperResolution"].active');
+
+        var slider = document.getElementById('hwFrameDropThreshold');
+        s.frameDropThreshold = slider ? parseInt(slider.value, 10) : defaults.frameDropThreshold;
+
+        s.gpuDevice = '';
+        return s;
+    }
+
+    /* ── Apply settings to active video players ───────────── */
+    function applySettings(settings) {
+        document.querySelectorAll('.video-player').forEach(function(el) {
+            if (!el._vrPlayer) return;
+            var v = el._vrPlayer.video;
+            if (settings.renderMode === 'gpu') {
+                v.style.transform = 'translateZ(0)';
+                v.style.willChange = 'transform';
+            } else {
+                v.style.transform = '';
+                v.style.willChange = '';
+            }
+        });
+    }
+
+    /* ── HTML helpers ─────────────────────────────────────── */
+    function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function escAttr(s) { return String(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    function buildRadioGroup(name, options, currentValue) {
+        var html = '<div style="display:flex;flex-direction:column;gap:6px;">';
+        options.forEach(function(opt) {
+            var active = currentValue === opt.value ? ' active' : '';
+            html += '<div class="codec-card' + active + '" data-radio-name="' + escAttr(name) + '" data-radio-value="' + escAttr(opt.value) + '" style="cursor:pointer;">';
+            html += '<div class="codec-icon"><i class="fas fa-' + (active ? 'dot-circle' : 'circle') + '"></i></div>';
+            html += '<div class="codec-info"><div class="codec-name">' + escHtml(opt.label) + '</div>';
+            if (opt.desc) html += '<div class="codec-desc">' + escHtml(opt.desc) + '</div>';
+            html += '</div></div>';
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function buildToggle(key, label, desc, checked) {
+        var active = checked ? ' active' : '';
+        var html = '<div class="hw-toggle codec-card' + active + '" data-toggle="' + escAttr(key) + '" style="cursor:pointer;margin-bottom:6px;">';
+        html += '<div class="codec-icon" style="background:' + (checked ? 'rgba(16,185,129,0.12)' : 'rgba(107,70,193,0.12)') + ';color:' + (checked ? 'var(--success)' : 'var(--text-muted)') + ';"><i class="fas fa-' + (checked ? 'toggle-on' : 'toggle-off') + '"></i></div>';
+        html += '<div class="codec-info"><div class="codec-name">' + escHtml(label) + '</div>';
+        if (desc) html += '<div class="codec-desc">' + escHtml(desc) + '</div>';
+        html += '</div></div>';
+        return html;
+    }
+
+    /* ── Wire up the modal ────────────────────────────────── */
+    var settingsBtn = document.getElementById('hwSettingsBtn');
+    var modalOverlay = document.getElementById('hwSettingsModal');
+    var modalBody = document.getElementById('hwSettingsBody');
+    var saveBtn = document.getElementById('hwSettingsSave');
+    var detectedCaps = null;
+
+    if (settingsBtn && modalOverlay) {
+        settingsBtn.addEventListener('click', function() {
+            modalOverlay.classList.add('active');
+            if (!detectedCaps) {
+                detectCapabilities(function(caps) {
+                    detectedCaps = caps;
+                    renderSettings(modalBody, caps, loadSettings());
+                });
+            } else {
+                renderSettings(modalBody, detectedCaps, loadSettings());
+            }
+        });
+
+        // Close handlers
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) modalOverlay.classList.remove('active');
+        });
+        modalOverlay.querySelectorAll('[data-modal-close]').forEach(function(btn) {
+            btn.addEventListener('click', function() { modalOverlay.classList.remove('active'); });
+        });
+
+        // Save
+        if (saveBtn) {
+            saveBtn.addEventListener('click', function() {
+                var newSettings = collectSettings(modalBody);
+                saveSettings(newSettings);
+                applySettings(newSettings);
+                modalOverlay.classList.remove('active');
+            });
+        }
+    }
+
+    // Apply persisted settings on page load
+    applySettings(loadSettings());
+
+    // Expose for use by video-player.js
+    window.HWAccelSettings = {
+        load: loadSettings,
+        save: saveSettings,
+        apply: applySettings,
+        detect: detectCapabilities
+    };
+})();
 </script>
 </body>
 </html>

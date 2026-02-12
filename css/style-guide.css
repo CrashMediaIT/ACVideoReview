@@ -1928,3 +1928,732 @@ h6 { font-size: 0.875rem; }
     min-height: 50px;
   }
 }
+
+/* ----------------------------------------------------------
+   37. Hardware-Accelerated Video Rendering
+   ---------------------------------------------------------- */
+.video-player video,
+.camera-cell video {
+  transform: translateZ(0);
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.video-player-container:fullscreen {
+  border-radius: 0;
+  border: none;
+}
+
+.video-player-container:fullscreen .video-player {
+  height: 100vh;
+  aspect-ratio: auto;
+}
+
+/* ----------------------------------------------------------
+   38. Professional Video Controls Overlay
+   ---------------------------------------------------------- */
+.video-controls-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+  padding: 40px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+.video-player-container:hover .video-controls-overlay,
+.video-controls-overlay.visible {
+  opacity: 1;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.controls-row .ctrl-btn {
+  background: none;
+  border: none;
+  color: var(--text-white);
+  font-size: 1rem;
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), color var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.controls-row .ctrl-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.controls-row .ctrl-btn.active {
+  color: var(--primary-light);
+}
+
+.controls-row .ctrl-btn i {
+  pointer-events: none;
+}
+
+.playback-speed-selector {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.playback-speed-selector .speed-option {
+  padding: 4px 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.playback-speed-selector .speed-option:hover {
+  color: var(--text-white);
+}
+
+.playback-speed-selector .speed-option.active {
+  background: var(--primary);
+  color: var(--text-white);
+}
+
+.volume-slider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-slider input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 80px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.volume-slider input[type="range"]:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 4px;
+}
+
+.volume-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--text-white);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.video-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: height 0.15s ease;
+}
+
+.video-progress-bar:hover {
+  height: 8px;
+}
+
+.video-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 2px;
+  position: relative;
+  transition: width 0.1s linear;
+}
+
+.video-progress-fill::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  background: var(--text-white);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.video-progress-bar:hover .video-progress-fill::after {
+  opacity: 1;
+}
+
+.video-progress-bar .clip-region {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: rgba(107, 70, 193, 0.4);
+  border-left: 2px solid var(--primary-light);
+  border-right: 2px solid var(--primary-light);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.video-timestamp {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 90px;
+}
+
+/* ----------------------------------------------------------
+   39. Analysis Panel (Catapult-style sidebar)
+   ---------------------------------------------------------- */
+.analysis-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+  min-height: calc(100vh - 200px);
+}
+
+.analysis-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: calc(100vh - 160px);
+  position: sticky;
+  top: 80px;
+}
+
+.analysis-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.analysis-panel-header h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.analysis-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.analysis-tab {
+  flex: 1;
+  padding: 10px 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition);
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.analysis-tab:hover {
+  color: var(--text-white);
+  background: rgba(107, 70, 193, 0.06);
+}
+
+.analysis-tab.active {
+  color: var(--primary-light);
+  border-bottom-color: var(--primary-light);
+}
+
+.analysis-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+
+.analysis-metric {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(45, 45, 63, 0.5);
+  font-size: 0.85rem;
+}
+
+.analysis-metric:last-child {
+  border-bottom: none;
+}
+
+.analysis-metric .metric-label {
+  color: var(--text-secondary);
+}
+
+.analysis-metric .metric-value {
+  font-weight: 600;
+  color: var(--text-white);
+  font-variant-numeric: tabular-nums;
+}
+
+.player-tracker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.player-tracker-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.player-tracker-item:hover {
+  border-color: var(--primary);
+}
+
+.player-tracker-item.active {
+  border-color: var(--primary-light);
+  background: rgba(107, 70, 193, 0.08);
+}
+
+.player-tracker-item .player-number-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--text-white);
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.player-tracker-item .player-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.player-tracker-item .player-info .name {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-white);
+}
+
+.player-tracker-item .player-info .position {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* ----------------------------------------------------------
+   40. Telestration Toolbar (Professional)
+   ---------------------------------------------------------- */
+.telestration-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.telestration-toolbar .tool-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.telestration-toolbar .tool-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+  margin: 0 8px;
+}
+
+.telestration-toolbar .tool-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: all var(--transition);
+  position: relative;
+}
+
+.telestration-toolbar .tool-btn:hover {
+  background: rgba(107, 70, 193, 0.1);
+  color: var(--text-white);
+  border-color: var(--border);
+}
+
+.telestration-toolbar .tool-btn.active {
+  background: var(--primary);
+  color: var(--text-white);
+  border-color: var(--primary);
+}
+
+.telestration-toolbar .tool-btn .tool-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.72rem;
+  color: var(--text-white);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+.telestration-toolbar .tool-btn:hover .tool-tooltip,
+.telestration-toolbar .tool-btn:focus-visible .tool-tooltip {
+  opacity: 1;
+}
+
+.color-picker-strip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.color-picker-strip .color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.color-picker-strip .color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.color-picker-strip .color-swatch.active {
+  border-color: var(--text-white);
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.stroke-width-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stroke-width-selector .stroke-option {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.stroke-width-selector .stroke-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border);
+}
+
+.stroke-width-selector .stroke-option.active {
+  background: rgba(107, 70, 193, 0.15);
+  border-color: var(--primary);
+}
+
+.stroke-width-selector .stroke-option .dot {
+  border-radius: 50%;
+  background: var(--text-white);
+}
+
+/* ----------------------------------------------------------
+   41. Encoding Settings Panel
+   ---------------------------------------------------------- */
+.encoding-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-top: 16px;
+}
+
+.encoding-panel-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.encoding-panel-header h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.encoding-panel-body {
+  padding: 16px 18px;
+}
+
+.encoding-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.encoding-option-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.encoding-option-group label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hw-accel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 4px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hw-accel-badge.unavailable {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--warning);
+}
+
+.hw-accel-badge i {
+  font-size: 0.65rem;
+}
+
+.codec-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.codec-card:hover {
+  border-color: var(--primary);
+}
+
+.codec-card.active {
+  border-color: var(--primary-light);
+  background: rgba(107, 70, 193, 0.08);
+}
+
+.codec-card .codec-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: rgba(107, 70, 193, 0.12);
+  color: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.codec-card .codec-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.codec-card .codec-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-white);
+}
+
+.codec-card .codec-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ----------------------------------------------------------
+   42. Missing Badge Variant
+   ---------------------------------------------------------- */
+.badge-secondary {
+  background: rgba(107, 107, 123, 0.15);
+  color: var(--text-muted);
+}
+
+/* ----------------------------------------------------------
+   43. Game Status Badges
+   ---------------------------------------------------------- */
+.game-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.game-status-badge .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.game-status-badge.status-live {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--error);
+}
+
+.game-status-badge.status-live .status-dot {
+  background: var(--error);
+  animation: pulse-dot 1.5s ease infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.game-status-badge.status-upcoming {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--info);
+}
+
+.game-status-badge.status-upcoming .status-dot {
+  background: var(--info);
+}
+
+.game-status-badge.status-completed {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success);
+}
+
+.game-status-badge.status-completed .status-dot {
+  background: var(--success);
+}
+
+/* ----------------------------------------------------------
+   44. Keyboard Shortcut Hints
+   ---------------------------------------------------------- */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-family: var(--font-family);
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  line-height: 1;
+}
+
+/* ----------------------------------------------------------
+   45. Responsive Analysis Panel
+   ---------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .analysis-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .analysis-panel {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .video-controls-overlay {
+    padding: 20px 12px 8px;
+  }
+
+  .controls-row .ctrl-btn {
+    padding: 4px 6px;
+    font-size: 0.9rem;
+  }
+
+  .playback-speed-selector {
+    display: none;
+  }
+
+  .telestration-toolbar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .encoding-options {
+    grid-template-columns: 1fr;
+  }
+}
