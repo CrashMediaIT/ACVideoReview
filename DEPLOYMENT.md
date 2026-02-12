@@ -101,7 +101,8 @@ ACVideoReview/
 │   ├── telestrate.php
 │   └── pair_device.php
 ├── deployment/             # Deployment configuration files
-│   ├── video_review.conf   # NGINX configuration
+│   ├── default.conf        # NGINX main site config (replaces stock default)
+│   ├── video_review.conf   # NGINX subdomain config (review.arcticwolves.ca)
 │   ├── php-config.ini      # PHP-FPM configuration
 │   └── setup_permissions.sh # Docker permissions script
 ├── uploads/                # User-uploaded content
@@ -162,14 +163,25 @@ docker exec nginx chmod -R 775 /config/www/ACVideoReview/tmp
 
 ### Step 3: Configure NGINX
 
+The linuxserver/nginx default configuration uses `server_name _;` which catches **all** traffic, including subdomain requests meant for this application. You must replace it with the provided `default.conf` that uses an explicit `server_name` so that `review.arcticwolves.ca` is routed to the Video Review app instead of the main dashboard.
+
 ```bash
-# Copy nginx config to site-confs
+# Replace the default site config so it doesn't capture subdomain traffic
+docker cp /portainer/nginx/www/ACVideoReview/deployment/default.conf \
+    nginx:/config/nginx/site-confs/default.conf
+
+# Copy video review subdomain config
 docker cp /portainer/nginx/www/ACVideoReview/deployment/video_review.conf \
     nginx:/config/nginx/site-confs/video_review.conf
+
+# Verify configuration syntax
+docker exec nginx nginx -t
 
 # Restart nginx to apply
 docker restart nginx
 ```
+
+> **Why both files?** The default `server_name _;` in the stock linuxserver/nginx config acts as a catch-all that intercepts requests to `review.arcticwolves.ca` before the subdomain server block can handle them. The provided `default.conf` restricts the main site to `arcticwolves.ca` and `www.arcticwolves.ca` only, allowing the video review subdomain to work correctly.
 
 ### Step 4: Configure PHP
 
@@ -217,9 +229,14 @@ docker restart nginx
 
 ## NGINX Configuration
 
-The NGINX configuration file is located at `deployment/video_review.conf`.
+Two NGINX configuration files are provided in `deployment/`:
 
-### Key Features
+| File | Purpose |
+|------|---------|
+| `default.conf` | Main site (`arcticwolves.ca`) — replaces the stock linuxserver/nginx default to prevent it from catching subdomain traffic |
+| `video_review.conf` | Video Review subdomain (`review.arcticwolves.ca`) |
+
+### Key Features (video_review.conf)
 - **Large file uploads**: 2GB max (`client_max_body_size 2G`)
 - **Extended timeouts**: 10 minutes for video upload/processing
 - **Security headers**: CSP, X-Frame-Options, XSS protection (matching `security.php`)
@@ -232,7 +249,10 @@ The NGINX configuration file is located at `deployment/video_review.conf`.
 ### Installing the Configuration
 
 ```bash
-# Copy to nginx site configs
+# Replace default site config (required for subdomain routing)
+docker cp deployment/default.conf nginx:/config/nginx/site-confs/default.conf
+
+# Copy video review subdomain config
 docker cp deployment/video_review.conf nginx:/config/nginx/site-confs/video_review.conf
 
 # Verify configuration syntax
@@ -426,6 +446,20 @@ tar -czf vr_uploads_$(date +%Y%m%d).tar.gz /portainer/nginx/www/ACVideoReview/up
 
 ## Troubleshooting
 
+### Subdomain Goes to Main Dashboard Instead of Video Review
+The most common cause is the stock linuxserver/nginx `default.conf` catching all traffic (including subdomains) with `server_name _;`.
+```bash
+# Check which server block handles review.arcticwolves.ca
+docker exec nginx nginx -T 2>/dev/null | grep -A2 'server_name'
+
+# Fix: replace default.conf with the one from this repo
+docker cp /portainer/nginx/www/ACVideoReview/deployment/default.conf \
+    nginx:/config/nginx/site-confs/default.conf
+docker cp /portainer/nginx/www/ACVideoReview/deployment/video_review.conf \
+    nginx:/config/nginx/site-confs/video_review.conf
+docker exec nginx nginx -t && docker restart nginx
+```
+
 ### NGINX Returns 403 Forbidden
 ```bash
 # Check file ownership
@@ -547,7 +581,8 @@ docker ps
 ### Key File Locations
 | File | Location |
 |------|----------|
-| NGINX config | `/config/nginx/site-confs/video_review.conf` |
+| NGINX default config | `/config/nginx/site-confs/default.conf` |
+| NGINX subdomain config | `/config/nginx/site-confs/video_review.conf` |
 | PHP config | `/config/php/php-config.ini` |
 | Environment file | `/config/www/ACVideoReview/video_review.env` |
 | NGINX access log | `/config/log/video_review_access.log` |
